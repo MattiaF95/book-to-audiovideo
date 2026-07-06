@@ -1,0 +1,141 @@
+{
+  "cleaned_text": "«Non muoverti,» sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. «Credo che ci sia... qualcuno.»\nDall’angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.\n«Chi va là?» gridò Giulia, la voce che tradiva un brivido di terrore. Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro. «Fatti vedere!»\nL'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro. Guardò i due ragazzi e disse con calma piatta: «Cercate la verità? O volete solo... fuggire? La risposta costa 1.500 euro. Cash.»\nMarco sbuffò, incredulo. «Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?»\n«Ragazzi... guardate là!» interruppe Giulia, indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.\nL'uomo sorrise misteriosamente. «Il tempo stringe. Tic-tac, tic-tac...»",
+  "changes": [
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 0,
+      "end_offset": 1,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 13,
+      "end_offset": 14,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 117,
+      "end_offset": 118,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 137,
+      "end_offset": 138,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 230,
+      "end_offset": 231,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 249,
+      "end_offset": 250,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 344,
+      "end_offset": 345,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 420,
+      "end_offset": 421,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 440,
+      "end_offset": 441,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 507,
+      "end_offset": 508,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 578,
+      "end_offset": 579,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 619,
+      "end_offset": 620,
+      "needs_review": false
+    },
+    {
+      "original": "01101001 01101110 01100110",
+      "cleaned": "inf",
+      "reason": "Decoded binary string to ASCII.",
+      "confidence": 0.95,
+      "start_offset": 739,
+      "end_offset": 767,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 780,
+      "end_offset": 781,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 817,
+      "end_offset": 818,
+      "needs_review": false
+    }
+  ],
+  "warnings": []
+}

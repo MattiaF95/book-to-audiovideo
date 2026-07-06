@@ -1,0 +1,239 @@
+{
+  "speakers": [
+    {
+      "speaker_id": "narrator",
+      "name": "Narrator",
+      "role": "narrator",
+      "gender": "neutral",
+      "continuity_key": "narrator",
+      "preferred_voice_constraints": [
+        "clear",
+        "neutral"
+      ]
+    },
+    {
+      "speaker_id": "1",
+      "name": "Marco",
+      "role": "narrator",
+      "gender": "male",
+      "continuity_key": "Marco",
+      "preferred_voice_constraints": [
+        "neutral"
+      ]
+    },
+    {
+      "speaker_id": "2",
+      "name": "Giulia",
+      "role": "character",
+      "gender": "female",
+      "continuity_key": "Giulia",
+      "preferred_voice_constraints": [
+        "young"
+      ]
+    },
+    {
+      "speaker_id": "3",
+      "name": "Mysterious Man",
+      "role": "character",
+      "gender": "male",
+      "continuity_key": "Mysterious Man",
+      "preferred_voice_constraints": [
+        "mysterious"
+      ]
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "1",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Non muoverti, sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. Credo che ci sia... qualcuno.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 0,
+      "end_offset": 69,
+      "emotion_hint": null,
+      "importance_score": 0.5
+    },
+    {
+      "segment_id": "2",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Dall'angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 70,
+      "end_offset": 134,
+      "emotion_hint": null,
+      "importance_score": 0.3
+    },
+    {
+      "segment_id": "3",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Chi va là? gridò Giulia, la voce che tradiva un brivido di terrore.",
+      "segment_type": "dialogue",
+      "speaker_hint": "Giulia",
+      "resolved_speaker_id": "2",
+      "start_offset": 135,
+      "end_offset": 184,
+      "emotion_hint": "fear",
+      "importance_score": 0.8
+    },
+    {
+      "segment_id": "4",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 185,
+      "end_offset": 262,
+      "emotion_hint": null,
+      "importance_score": 0.4
+    },
+    {
+      "segment_id": "5",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Fatti vedere!",
+      "segment_type": "dialogue",
+      "speaker_hint": "Giulia",
+      "resolved_speaker_id": "2",
+      "start_offset": 263,
+      "end_offset": 273,
+      "emotion_hint": "anger",
+      "importance_score": 0.7
+    },
+    {
+      "segment_id": "6",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "L'ombra si mosse lentamente verso la luce della luna.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 274,
+      "end_offset": 313,
+      "emotion_hint": null,
+      "importance_score": 0.2
+    },
+    {
+      "segment_id": "7",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Era un uomo alto, vestito con un cappotto logoro.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 314,
+      "end_offset": 346,
+      "emotion_hint": null,
+      "importance_score": 0.1
+    },
+    {
+      "segment_id": "8",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Guardò i due ragazzi e disse con calma piatta: Cercate la verità? O volete solo... fuggire?",
+      "segment_type": "dialogue",
+      "speaker_hint": "mysterious man",
+      "resolved_speaker_id": "3",
+      "start_offset": 347,
+      "end_offset": 423,
+      "emotion_hint": "neutral",
+      "importance_score": 0.9
+    },
+    {
+      "segment_id": "9",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "La risposta costa 1.500 euro. Cash.",
+      "segment_type": "dialogue",
+      "speaker_hint": "mysterious man",
+      "resolved_speaker_id": "3",
+      "start_offset": 424,
+      "end_offset": 457,
+      "emotion_hint": "menacing",
+      "importance_score": 0.8
+    },
+    {
+      "segment_id": "10",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Marco sbuffò, incredulo.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 458,
+      "end_offset": 483,
+      "emotion_hint": null,
+      "importance_score": 0.3
+    },
+    {
+      "segment_id": "11",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?",
+      "segment_type": "dialogue",
+      "speaker_hint": "Marco",
+      "resolved_speaker_id": "2",
+      "start_offset": 484,
+      "end_offset": 563,
+      "emotion_hint": "anger",
+      "importance_score": 0.8
+    },
+    {
+      "segment_id": "12",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Ragazzi... guardate là!",
+      "segment_type": "dialogue",
+      "speaker_hint": "Giulia",
+      "resolved_speaker_id": "2",
+      "start_offset": 564,
+      "end_offset": 579,
+      "emotion_hint": "excitement",
+      "importance_score": 0.7
+    },
+    {
+      "segment_id": "13",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "individuando lo schermo del computer sulla scrivania.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 580,
+      "end_offset": 616,
+      "emotion_hint": null,
+      "importance_score": 0.2
+    },
+    {
+      "segment_id": "14",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 617,
+      "end_offset": 694,
+      "emotion_hint": null,
+      "importance_score": 0.4
+    },
+    {
+      "segment_id": "15",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "L'uomo sorrise misteriosamente.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 695,
+      "end_offset": 725,
+      "emotion_hint": null,
+      "importance_score": 0.1
+    },
+    {
+      "segment_id": "16",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Il tempo stringe. Tic-tac, tic-tac...",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 726,
+      "end_offset": 755,
+      "emotion_hint": null,
+      "importance_score": 0.2
+    }
+  ]
+}

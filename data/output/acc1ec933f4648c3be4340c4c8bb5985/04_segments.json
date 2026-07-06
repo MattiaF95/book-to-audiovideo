@@ -1,0 +1,88 @@
+{
+  "segments": [
+    {
+      "segment_id": "seg_001",
+      "chunk_id": "0feee1001874",
+      "raw_text": "«Non muoverti,» sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. «Credo che ci sia... qualcuno.»",
+      "segment_type": "dialogue",
+      "speaker_hint": "Marco",
+      "resolved_speaker_id": null,
+      "start_offset": 0,
+      "end_offset": 179,
+      "emotion_hint": "tense",
+      "importance_score": 0.8
+    },
+    {
+      "segment_id": "seg_002",
+      "chunk_id": "0feee1001874",
+      "raw_text": "Dall’angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": null,
+      "start_offset": 180,
+      "end_offset": 264,
+      "emotion_hint": "suspenseful",
+      "importance_score": 0.7
+    },
+    {
+      "segment_id": "seg_003",
+      "chunk_id": "0feee1001874",
+      "raw_text": "«Chi va là?» gridò Giulia, la voce che tradiva un brivido di terrore. Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro. «Fatti vedere!»",
+      "segment_type": "dialogue",
+      "speaker_hint": "Giulia",
+      "resolved_speaker_id": null,
+      "start_offset": 265,
+      "end_offset": 464,
+      "emotion_hint": "fearful",
+      "importance_score": 0.9
+    },
+    {
+      "segment_id": "seg_004",
+      "chunk_id": "0feee1001874",
+      "raw_text": "L'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro. Guardò i due ragazzi e disse con calma piatta: «Cercate la verità? O volete solo... fuggire? La risposta costa 1.500 euro. Cash.»",
+      "segment_type": "dialogue",
+      "speaker_hint": "stranger",
+      "resolved_speaker_id": null,
+      "start_offset": 465,
+      "end_offset": 674,
+      "emotion_hint": "calm",
+      "importance_score": 0.8
+    },
+    {
+      "segment_id": "seg_005",
+      "chunk_id": "0feee1001874",
+      "raw_text": "Marco sbuffò, incredulo. «Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?»",
+      "segment_type": "dialogue",
+      "speaker_hint": "Marco",
+      "resolved_speaker_id": null,
+      "start_offset": 675,
+      "end_offset": 779,
+      "emotion_hint": "disbelieving",
+      "importance_score": 0.7
+    },
+    {
+      "segment_id": "seg_006",
+      "chunk_id": "0feee1001874",
+      "raw_text": "«Ragazzi... guardate là!» interruppe Giulia, indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.",
+      "segment_type": "dialogue",
+      "speaker_hint": "Giulia",
+      "resolved_speaker_id": null,
+      "start_offset": 780,
+      "end_offset": 948,
+      "emotion_hint": "surprised",
+      "importance_score": 0.9
+    },
+    {
+      "segment_id": "seg_007",
+      "chunk_id": "0feee1001874",
+      "raw_text": "L'uomo sorrise misteriosamente. «Il tempo stringe. Tic-tac, tic-tac...»",
+      "segment_type": "dialogue",
+      "speaker_hint": "stranger",
+      "resolved_speaker_id": null,
+      "start_offset": 949,
+      "end_offset": 1017,
+      "emotion_hint": "mysterious",
+      "importance_score": 0.8
+    }
+  ]
+}

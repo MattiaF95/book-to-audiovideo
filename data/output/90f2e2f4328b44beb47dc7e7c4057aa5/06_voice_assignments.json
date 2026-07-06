@@ -1,0 +1,44 @@
+{
+  "assignments": [
+    {
+      "speaker_id": "narrator",
+      "voice_id": "JBFqnCBsd6RMkjVDRZzb",
+      "voice_name": "George - Warm, Captivating Storyteller",
+      "delivery_style": "narrative_story",
+      "tts_prompt_tags": [
+        "british"
+      ],
+      "continuity_anchor": "narrator"
+    },
+    {
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "voice_name": "Roger - Laid-Back, Casual, Resonant",
+      "delivery_style": "conversational",
+      "tts_prompt_tags": [
+        "american"
+      ],
+      "continuity_anchor": "Marco"
+    },
+    {
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "voice_name": "Sarah - Mature, Reassuring, Confident",
+      "delivery_style": "entertainment_tv",
+      "tts_prompt_tags": [
+        "american"
+      ],
+      "continuity_anchor": "Giulia"
+    },
+    {
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "voice_name": "Laura - Enthusiast, Quirky Attitude",
+      "delivery_style": "social_media",
+      "tts_prompt_tags": [
+        "american"
+      ],
+      "continuity_anchor": "Mysterious Man"
+    }
+  ]
+}

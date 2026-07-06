@@ -1,0 +1,660 @@
+{
+  "book_id": "test-libro-tts",
+  "source_name": "test-libro-tts.docx",
+  "final_video_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/final/test-libro-tts.mp4",
+  "generated_at": "2026-07-06T14:29:48.525408+00:00",
+  "speakers": [
+    {
+      "speaker_id": "narrator",
+      "name": "Narrator",
+      "role": "narrator",
+      "gender": "neutral",
+      "continuity_key": "narrator",
+      "preferred_voice_constraints": [
+        "clear",
+        "neutral"
+      ]
+    },
+    {
+      "speaker_id": "1",
+      "name": "Marco",
+      "role": "narrator",
+      "gender": "male",
+      "continuity_key": "Marco",
+      "preferred_voice_constraints": [
+        "neutral"
+      ]
+    },
+    {
+      "speaker_id": "2",
+      "name": "Giulia",
+      "role": "character",
+      "gender": "female",
+      "continuity_key": "Giulia",
+      "preferred_voice_constraints": [
+        "young"
+      ]
+    },
+    {
+      "speaker_id": "3",
+      "name": "Mysterious Man",
+      "role": "character",
+      "gender": "male",
+      "continuity_key": "Mysterious Man",
+      "preferred_voice_constraints": [
+        "mysterious"
+      ]
+    }
+  ],
+  "voice_assignments": [
+    {
+      "speaker_id": "narrator",
+      "voice_id": "JBFqnCBsd6RMkjVDRZzb",
+      "voice_name": "George - Warm, Captivating Storyteller",
+      "delivery_style": "narrative_story",
+      "tts_prompt_tags": [],
+      "continuity_anchor": "narrator"
+    },
+    {
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "voice_name": "Roger - Laid-Back, Casual, Resonant",
+      "delivery_style": "conversational",
+      "tts_prompt_tags": [],
+      "continuity_anchor": "Marco"
+    },
+    {
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "voice_name": "Sarah - Mature, Reassuring, Confident",
+      "delivery_style": "entertainment_tv",
+      "tts_prompt_tags": [],
+      "continuity_anchor": "Giulia"
+    },
+    {
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "voice_name": "Laura - Enthusiast, Quirky Attitude",
+      "delivery_style": "social_media",
+      "tts_prompt_tags": [],
+      "continuity_anchor": "Mysterious Man"
+    }
+  ],
+  "media_assets": [
+    {
+      "provider": "pixabay",
+      "query": "stock footage stock video",
+      "asset_id": "309811",
+      "media_type": "video",
+      "source_url": "https://cdn.pixabay.com/video/2025/10/14/309811_medium.mp4",
+      "local_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/media/video/video_309811.mp4",
+      "duration_seconds": null,
+      "metadata": {
+        "tags": "hd beach waves video, sound of ocean waves, tropical ocean waves video, waves, ocean, sea, rocky shore, sunset, beach, 4k video, stock footage, nature, relaxing, peaceful, golden hour, water, beautiful wallpaper, background, stock footage 4k, stock footage ocean, summer, surf, tide, tranquility, vacation, video for youtube",
+        "user": "WaveStockFootages"
+      }
+    }
+  ],
+  "tts_outputs": [
+    {
+      "segment_id": "1",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/1.mp3",
+      "duration_seconds": 0.835918,
+      "request_id": "e7Bsk29X4coAKrmdybGy",
+      "history_item_id": "QI7zEpj2rKwHhZqIHXAU",
+      "previous_text": null,
+      "next_text": "Dall'angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "2",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/2.mp3",
+      "duration_seconds": 0.835918,
+      "request_id": "L7fzfs7w2cgApiUesxEB",
+      "history_item_id": "0XGYoC6yWbBz4BLwzev2",
+      "previous_text": "Non muoverti, sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. Credo che ci sia... qualcuno.",
+      "next_text": "Chi va là?",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "3",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/3.mp3",
+      "duration_seconds": 0.966531,
+      "request_id": "45JFBpwKyGydPePGEabl",
+      "history_item_id": "wsBu0buvuZ1lxVPGcd0k",
+      "previous_text": "Dall'angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.",
+      "next_text": "Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "4",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/4.mp3",
+      "duration_seconds": 0.548571,
+      "request_id": "5ZXPGIlxGHv0AVdl2PS5",
+      "history_item_id": "qTC7JpcIC2UWpqRo4oUW",
+      "previous_text": "Chi va là?",
+      "next_text": "Fatti vedere!",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "5",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/5.mp3",
+      "duration_seconds": 0.548571,
+      "request_id": "qpwtFcKcnXkDwKyZ9TA8",
+      "history_item_id": "g13ERxHTTzMsViFfcXtU",
+      "previous_text": "Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro.",
+      "next_text": "L'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "6",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/6.mp3",
+      "duration_seconds": 0.783673,
+      "request_id": "Mi40crwhSTK9WztccVEo",
+      "history_item_id": "B9flosWq2NjWRNE9pxpA",
+      "previous_text": "Fatti vedere!",
+      "next_text": "Guardò i due ragazzi e disse con calma piatta: Cercate la verità? O volete solo... fuggire?",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "7",
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/7.mp3",
+      "duration_seconds": 0.835918,
+      "request_id": "ZIKunDtmPSRBg4dCYwh0",
+      "history_item_id": "cEcCixIPNpwvdhDMIAGv",
+      "previous_text": "L'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro.",
+      "next_text": "La risposta costa 1.500 euro. Cash.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "8",
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/8.mp3",
+      "duration_seconds": 0.835918,
+      "request_id": "92YnaoQfuiAQGn5RL20V",
+      "history_item_id": "ZSYKrO8O5VUxJGIY9YoQ",
+      "previous_text": "Guardò i due ragazzi e disse con calma piatta: Cercate la verità? O volete solo... fuggire?",
+      "next_text": "Marco sbuffò, incredulo.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "9",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/9.mp3",
+      "duration_seconds": 0.444082,
+      "request_id": "3DPQhKYlgWEov62EVIPZ",
+      "history_item_id": "eAurIUu67LFOdBEAlc1i",
+      "previous_text": "La risposta costa 1.500 euro. Cash.",
+      "next_text": "Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "10",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/10.mp3",
+      "duration_seconds": 0.731429,
+      "request_id": "jdPwTDyZjtRTOEM7HXHx",
+      "history_item_id": "wc5dbl6YQR7rgEWHLr4W",
+      "previous_text": "Marco sbuffò, incredulo.",
+      "next_text": "Ragazzi... guardate là!",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "11",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/11.mp3",
+      "duration_seconds": 0.835918,
+      "request_id": "9eGIQ66IBlWcj9dU28ds",
+      "history_item_id": "GJsjWvex3ORsfai51c2C",
+      "previous_text": "Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?",
+      "next_text": "indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "12",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/12.mp3",
+      "duration_seconds": 0.496327,
+      "request_id": "P9S0t0HqlXr76Yi27DsO",
+      "history_item_id": "7apiV24OXEVTmKtkgxaB",
+      "previous_text": "Ragazzi... guardate là!",
+      "next_text": "L'uomo sorrise misteriosamente.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "13",
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/13.mp3",
+      "duration_seconds": 0.862041,
+      "request_id": "mkuCWbMN6qDSQ2MV5iKy",
+      "history_item_id": "WJ7lzER5PZ2XpxgN0lye",
+      "previous_text": "indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.",
+      "next_text": "Il tempo stringe. Tic-tac, tic-tac...",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "14",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/14.mp3",
+      "duration_seconds": 0.548571,
+      "request_id": "oJxkF2SsEvDFsW6j2VUo",
+      "history_item_id": "rcxTVwXr9AimVuBacvCo",
+      "previous_text": "L'uomo sorrise misteriosamente.",
+      "next_text": null,
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    }
+  ],
+  "mixed_audio": [
+    {
+      "segment_id": "1",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/1.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.835918,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/1.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/1.mp3"
+      }
+    },
+    {
+      "segment_id": "2",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/2.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.835918,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/2.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/2.mp3"
+      }
+    },
+    {
+      "segment_id": "3",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/3.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.966531,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/3.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/3.mp3"
+      }
+    },
+    {
+      "segment_id": "4",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/4.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.548571,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/4.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/4.mp3"
+      }
+    },
+    {
+      "segment_id": "5",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/5.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.548571,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/5.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/5.mp3"
+      }
+    },
+    {
+      "segment_id": "6",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/6.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.783673,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/6.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/6.mp3"
+      }
+    },
+    {
+      "segment_id": "7",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/7.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.835918,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/7.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/7.mp3"
+      }
+    },
+    {
+      "segment_id": "8",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/8.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.835918,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/8.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/8.mp3"
+      }
+    },
+    {
+      "segment_id": "9",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/9.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.444082,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/9.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/9.mp3"
+      }
+    },
+    {
+      "segment_id": "10",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/10.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.731429,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/10.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/10.mp3"
+      }
+    },
+    {
+      "segment_id": "11",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/11.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.835918,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/11.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/11.mp3"
+      }
+    },
+    {
+      "segment_id": "12",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/12.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.496327,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/12.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/12.mp3"
+      }
+    },
+    {
+      "segment_id": "13",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/13.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.862041,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/13.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/13.mp3"
+      }
+    },
+    {
+      "segment_id": "14",
+      "mixed_audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/14.mp3",
+      "normalized_levels": {
+        "voice_priority": 1.0,
+        "sfx_gain": 0.0
+      },
+      "duration_seconds": 0.548571,
+      "metadata": {
+        "ffmpeg_command": "ffmpeg -y -i data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/14.mp3 -af loudnorm=I=-16:LRA=11:TP=-1.5 data/output/437eda8e8d4046bfb4fd03e6d970bf7d/mix/14.mp3"
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "segment_id": "1",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "mood": "neutral",
+      "needs_sfx": false,
+      "video_query": [
+        "stock footage",
+        "stock video"
+      ],
+      "sfx_query": [
+        "sound effects",
+        "fx"
+      ]
+    },
+    {
+      "segment_id": "2",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "mood": "string",
+      "needs_sfx": false,
+      "video_query": [
+        "string"
+      ],
+      "sfx_query": [
+        "string"
+      ]
+    },
+    {
+      "segment_id": "3",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "mood": "neutral",
+      "needs_sfx": false,
+      "video_query": [
+        "stock footage",
+        "stock video"
+      ],
+      "sfx_query": [
+        "sound effects",
+        "fx"
+      ]
+    },
+    {
+      "segment_id": "4",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "mood": "string",
+      "needs_sfx": false,
+      "video_query": [
+        "string"
+      ],
+      "sfx_query": [
+        "string"
+      ]
+    },
+    {
+      "segment_id": "5",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "mood": "string",
+      "needs_sfx": false,
+      "video_query": [
+        "string"
+      ],
+      "sfx_query": [
+        "string"
+      ]
+    },
+    {
+      "segment_id": "6",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "mood": "neutral",
+      "needs_sfx": false,
+      "video_query": [
+        "stock footage",
+        "stock video"
+      ],
+      "sfx_query": [
+        "sound effects",
+        "fx"
+      ]
+    },
+    {
+      "segment_id": "7",
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "mood": "string",
+      "needs_sfx": false,
+      "video_query": [
+        "string"
+      ],
+      "sfx_query": [
+        "string"
+      ]
+    },
+    {
+      "segment_id": "8",
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "mood": "string",
+      "needs_sfx": false,
+      "video_query": [
+        "string"
+      ],
+      "sfx_query": [
+        "string"
+      ]
+    },
+    {
+      "segment_id": "9",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "mood": "string",
+      "needs_sfx": false,
+      "video_query": [
+        "string"
+      ],
+      "sfx_query": [
+        "string"
+      ]
+    },
+    {
+      "segment_id": "10",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "mood": "string",
+      "needs_sfx": false,
+      "video_query": [
+        "string"
+      ],
+      "sfx_query": [
+        "string"
+      ]
+    },
+    {
+      "segment_id": "11",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "mood": "string",
+      "needs_sfx": false,
+      "video_query": [
+        "string"
+      ],
+      "sfx_query": [
+        "string"
+      ]
+    },
+    {
+      "segment_id": "12",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "mood": "string",
+      "needs_sfx": false,
+      "video_query": [
+        "string"
+      ],
+      "sfx_query": [
+        "string"
+      ]
+    },
+    {
+      "segment_id": "13",
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "mood": "neutral",
+      "needs_sfx": false,
+      "video_query": [
+        "stock footage",
+        "stock video"
+      ],
+      "sfx_query": [
+        "sound effects",
+        "fx"
+      ]
+    },
+    {
+      "segment_id": "14",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "mood": "string",
+      "needs_sfx": false,
+      "video_query": [
+        "string"
+      ],
+      "sfx_query": [
+        "string"
+      ]
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}

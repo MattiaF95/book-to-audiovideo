@@ -1,0 +1,281 @@
+{
+  "job_id": "acc1ec933f4648c3be4340c4c8bb5985",
+  "book_id": "tmpp10qr585",
+  "source_path": "data/output/acc1ec933f4648c3be4340c4c8bb5985/source/tmpp10qr585.docx",
+  "source_name": "tmpp10qr585.docx",
+  "source_type": ".docx",
+  "status": "failed",
+  "current_stage": "speaker_resolution",
+  "raw_text": "«Non muoverti,» sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. «Credo che ci sia... qualcuno.»\nDall’angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.\n«Chi va là?» gridò Giulia, la voce che tradiva un brivido di terrore. Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro. «Fatti vedere!»\nL'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro. Guardò i due ragazzi e disse con calma piatta: «Cercate la verità? O volete solo... fuggire? La risposta costa 1.500 euro. Cash.»\nMarco sbuffò, incredulo. «Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?»\n«Ragazzi... guardate là!» interruppe Giulia, indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.\nL'uomo sorrise misteriosamente. «Il tempo stringe. Tic-tac, tic-tac...»",
+  "cleaned_text": "«Non muoverti,» sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. «Credo che ci sia... qualcuno.»\nDall’angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.\n«Chi va là?» gridò Giulia, la voce che tradiva un brivido di terrore. Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro. «Fatti vedere!»\nL'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro. Guardò i due ragazzi e disse con calma piatta: «Cercate la verità? O volete solo... fuggire? La risposta costa 1.500 euro. Cash.»\nMarco sbuffò, incredulo. «Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?»\n«Ragazzi... guardate là!» interruppe Giulia, indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.\nL'uomo sorrise misteriosamente. «Il tempo stringe. Tic-tac, tic-tac...»",
+  "cleanup_diff": [
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 0,
+      "end_offset": 1,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 13,
+      "end_offset": 14,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 117,
+      "end_offset": 118,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 137,
+      "end_offset": 138,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 230,
+      "end_offset": 231,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 249,
+      "end_offset": 250,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 344,
+      "end_offset": 345,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 420,
+      "end_offset": 421,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 440,
+      "end_offset": 441,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 507,
+      "end_offset": 508,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 578,
+      "end_offset": 579,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 619,
+      "end_offset": 620,
+      "needs_review": false
+    },
+    {
+      "original": "01101001 01101110 01100110",
+      "cleaned": "inf",
+      "reason": "Decoded binary string to ASCII.",
+      "confidence": 0.95,
+      "start_offset": 739,
+      "end_offset": 767,
+      "needs_review": false
+    },
+    {
+      "original": "«",
+      "cleaned": "“",
+      "reason": "Replaced opening guillemet with standard opening double quote.",
+      "confidence": 0.9,
+      "start_offset": 780,
+      "end_offset": 781,
+      "needs_review": false
+    },
+    {
+      "original": "»",
+      "cleaned": "”",
+      "reason": "Replaced closing guillemet with standard closing double quote.",
+      "confidence": 0.9,
+      "start_offset": 817,
+      "end_offset": 818,
+      "needs_review": false
+    }
+  ],
+  "cleanup_warnings": [],
+  "chunks": [
+    {
+      "chunk_id": "0feee1001874",
+      "text": "«Non muoverti,» sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. «Credo che ci sia... qualcuno.»\nDall’angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.\n«Chi va là?» gridò Giulia, la voce che tradiva un brivido di terrore. Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro. «Fatti vedere!»\nL'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro. Guardò i due ragazzi e disse con calma piatta: «Cercate la verità? O volete solo... fuggire? La risposta costa 1.500 euro. Cash.»\nMarco sbuffò, incredulo. «Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?»\n«Ragazzi... guardate là!» interruppe Giulia, indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.\nL'uomo sorrise misteriosamente. «Il tempo stringe. Tic-tac, tic-tac...»",
+      "order_index": 0,
+      "paragraph_start": 0,
+      "paragraph_end": 0,
+      "estimated_duration_seconds": 61.11111111111111
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "seg_001",
+      "chunk_id": "0feee1001874",
+      "raw_text": "«Non muoverti,» sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. «Credo che ci sia... qualcuno.»",
+      "segment_type": "dialogue",
+      "speaker_hint": "Marco",
+      "resolved_speaker_id": null,
+      "start_offset": 0,
+      "end_offset": 179,
+      "emotion_hint": "tense",
+      "importance_score": 0.8
+    },
+    {
+      "segment_id": "seg_002",
+      "chunk_id": "0feee1001874",
+      "raw_text": "Dall’angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": null,
+      "start_offset": 180,
+      "end_offset": 264,
+      "emotion_hint": "suspenseful",
+      "importance_score": 0.7
+    },
+    {
+      "segment_id": "seg_003",
+      "chunk_id": "0feee1001874",
+      "raw_text": "«Chi va là?» gridò Giulia, la voce che tradiva un brivido di terrore. Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro. «Fatti vedere!»",
+      "segment_type": "dialogue",
+      "speaker_hint": "Giulia",
+      "resolved_speaker_id": null,
+      "start_offset": 265,
+      "end_offset": 464,
+      "emotion_hint": "fearful",
+      "importance_score": 0.9
+    },
+    {
+      "segment_id": "seg_004",
+      "chunk_id": "0feee1001874",
+      "raw_text": "L'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro. Guardò i due ragazzi e disse con calma piatta: «Cercate la verità? O volete solo... fuggire? La risposta costa 1.500 euro. Cash.»",
+      "segment_type": "dialogue",
+      "speaker_hint": "stranger",
+      "resolved_speaker_id": null,
+      "start_offset": 465,
+      "end_offset": 674,
+      "emotion_hint": "calm",
+      "importance_score": 0.8
+    },
+    {
+      "segment_id": "seg_005",
+      "chunk_id": "0feee1001874",
+      "raw_text": "Marco sbuffò, incredulo. «Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?»",
+      "segment_type": "dialogue",
+      "speaker_hint": "Marco",
+      "resolved_speaker_id": null,
+      "start_offset": 675,
+      "end_offset": 779,
+      "emotion_hint": "disbelieving",
+      "importance_score": 0.7
+    },
+    {
+      "segment_id": "seg_006",
+      "chunk_id": "0feee1001874",
+      "raw_text": "«Ragazzi... guardate là!» interruppe Giulia, indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.",
+      "segment_type": "dialogue",
+      "speaker_hint": "Giulia",
+      "resolved_speaker_id": null,
+      "start_offset": 780,
+      "end_offset": 948,
+      "emotion_hint": "surprised",
+      "importance_score": 0.9
+    },
+    {
+      "segment_id": "seg_007",
+      "chunk_id": "0feee1001874",
+      "raw_text": "L'uomo sorrise misteriosamente. «Il tempo stringe. Tic-tac, tic-tac...»",
+      "segment_type": "dialogue",
+      "speaker_hint": "stranger",
+      "resolved_speaker_id": null,
+      "start_offset": 949,
+      "end_offset": 1017,
+      "emotion_hint": "mysterious",
+      "importance_score": 0.8
+    }
+  ],
+  "speakers": [],
+  "voice_assignments": [],
+  "pronunciation_overrides": [],
+  "tone_tags": [],
+  "media_plan": [],
+  "downloaded_media": [],
+  "tts_outputs": [],
+  "mixed_audio_paths": [],
+  "final_video_path": null,
+  "manifest_path": null,
+  "warnings": [],
+  "errors": [
+    "Gemini errore 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n"
+  ],
+  "metrics": {
+    "started_at": "2026-07-06T11:18:55.438527+00:00",
+    "finished_at": "2026-07-06T11:19:34.609057+00:00",
+    "total_duration_seconds": null
+  },
+  "events": [
+    {
+      "timestamp": "2026-07-06T11:18:55.441171+00:00",
+      "stage": "queued",
+      "status": "running",
+      "message": "Pipeline avviata"
+    },
+    {
+      "timestamp": "2026-07-06T11:19:34.609207+00:00",
+      "stage": "speaker_resolution",
+      "status": "failed",
+      "message": "Gemini errore 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n"
+    }
+  ],
+  "attention_request": null,
+  "artifact_dir": "data/output/acc1ec933f4648c3be4340c4c8bb5985",
+  "speaker_last_request_ids": {}
+}

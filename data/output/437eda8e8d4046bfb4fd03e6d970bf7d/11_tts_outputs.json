@@ -1,0 +1,200 @@
+{
+  "tts_outputs": [
+    {
+      "segment_id": "1",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/1.mp3",
+      "duration_seconds": 0.835918,
+      "request_id": "e7Bsk29X4coAKrmdybGy",
+      "history_item_id": "QI7zEpj2rKwHhZqIHXAU",
+      "previous_text": null,
+      "next_text": "Dall'angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "2",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/2.mp3",
+      "duration_seconds": 0.835918,
+      "request_id": "L7fzfs7w2cgApiUesxEB",
+      "history_item_id": "0XGYoC6yWbBz4BLwzev2",
+      "previous_text": "Non muoverti, sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. Credo che ci sia... qualcuno.",
+      "next_text": "Chi va là?",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "3",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/3.mp3",
+      "duration_seconds": 0.966531,
+      "request_id": "45JFBpwKyGydPePGEabl",
+      "history_item_id": "wsBu0buvuZ1lxVPGcd0k",
+      "previous_text": "Dall'angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.",
+      "next_text": "Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "4",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/4.mp3",
+      "duration_seconds": 0.548571,
+      "request_id": "5ZXPGIlxGHv0AVdl2PS5",
+      "history_item_id": "qTC7JpcIC2UWpqRo4oUW",
+      "previous_text": "Chi va là?",
+      "next_text": "Fatti vedere!",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "5",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/5.mp3",
+      "duration_seconds": 0.548571,
+      "request_id": "qpwtFcKcnXkDwKyZ9TA8",
+      "history_item_id": "g13ERxHTTzMsViFfcXtU",
+      "previous_text": "Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro.",
+      "next_text": "L'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "6",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/6.mp3",
+      "duration_seconds": 0.783673,
+      "request_id": "Mi40crwhSTK9WztccVEo",
+      "history_item_id": "B9flosWq2NjWRNE9pxpA",
+      "previous_text": "Fatti vedere!",
+      "next_text": "Guardò i due ragazzi e disse con calma piatta: Cercate la verità? O volete solo... fuggire?",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "7",
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/7.mp3",
+      "duration_seconds": 0.835918,
+      "request_id": "ZIKunDtmPSRBg4dCYwh0",
+      "history_item_id": "cEcCixIPNpwvdhDMIAGv",
+      "previous_text": "L'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro.",
+      "next_text": "La risposta costa 1.500 euro. Cash.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "8",
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/8.mp3",
+      "duration_seconds": 0.835918,
+      "request_id": "92YnaoQfuiAQGn5RL20V",
+      "history_item_id": "ZSYKrO8O5VUxJGIY9YoQ",
+      "previous_text": "Guardò i due ragazzi e disse con calma piatta: Cercate la verità? O volete solo... fuggire?",
+      "next_text": "Marco sbuffò, incredulo.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "9",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/9.mp3",
+      "duration_seconds": 0.444082,
+      "request_id": "3DPQhKYlgWEov62EVIPZ",
+      "history_item_id": "eAurIUu67LFOdBEAlc1i",
+      "previous_text": "La risposta costa 1.500 euro. Cash.",
+      "next_text": "Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "10",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/10.mp3",
+      "duration_seconds": 0.731429,
+      "request_id": "jdPwTDyZjtRTOEM7HXHx",
+      "history_item_id": "wc5dbl6YQR7rgEWHLr4W",
+      "previous_text": "Marco sbuffò, incredulo.",
+      "next_text": "Ragazzi... guardate là!",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "11",
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/11.mp3",
+      "duration_seconds": 0.835918,
+      "request_id": "9eGIQ66IBlWcj9dU28ds",
+      "history_item_id": "GJsjWvex3ORsfai51c2C",
+      "previous_text": "Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?",
+      "next_text": "indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "12",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/12.mp3",
+      "duration_seconds": 0.496327,
+      "request_id": "P9S0t0HqlXr76Yi27DsO",
+      "history_item_id": "7apiV24OXEVTmKtkgxaB",
+      "previous_text": "Ragazzi... guardate là!",
+      "next_text": "L'uomo sorrise misteriosamente.",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "13",
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/13.mp3",
+      "duration_seconds": 0.862041,
+      "request_id": "mkuCWbMN6qDSQ2MV5iKy",
+      "history_item_id": "WJ7lzER5PZ2XpxgN0lye",
+      "previous_text": "indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.",
+      "next_text": "Il tempo stringe. Tic-tac, tic-tac...",
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    },
+    {
+      "segment_id": "14",
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "audio_path": "data/output/437eda8e8d4046bfb4fd03e6d970bf7d/tts/14.mp3",
+      "duration_seconds": 0.548571,
+      "request_id": "oJxkF2SsEvDFsW6j2VUo",
+      "history_item_id": "rcxTVwXr9AimVuBacvCo",
+      "previous_text": "L'uomo sorrise misteriosamente.",
+      "next_text": null,
+      "provider_metadata": {
+        "model_id": "eleven_turbo_v2_5"
+      }
+    }
+  ]
+}

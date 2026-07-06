@@ -1,0 +1,61 @@
+{
+  "chunks_processed": 1,
+  "cleaned_text_preview": "Non muoverti, sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. Credo che ci sia... qualcuno.\nDall'angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.\nChi va là? gridò Giulia, la voce che tradiva un brivido di terrore. Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro. Fatti vedere!\nL'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro. Guardò i due ragazzi e disse con calma piatta: Cercate la verità? O volete solo... fuggire? La risposta costa 1.500 euro. Cash.\nMarco sbuffò, incredulo. Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?\nRagazzi... guardate là! interruppe Giulia, indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.\nL'uomo sorrise misteriosamente. Il tempo stringe. Tic-tac, tic-tac...",
+  "changes": [
+    {
+      "original": "«Non muoverti,»",
+      "cleaned": "Non muoverti,",
+      "reason": "Replaced curly quotes with straight quotes",
+      "confidence": 1.0,
+      "start_offset": 0,
+      "end_offset": 7,
+      "needs_review": false
+    },
+    {
+      "original": "«Credo che ci sia... qualcuno.»",
+      "cleaned": "Credo che ci sia... qualcuno.",
+      "reason": "Added period at the end of the sentence",
+      "confidence": 1.0,
+      "start_offset": 34,
+      "end_offset": 54,
+      "needs_review": false
+    },
+    {
+      "original": "«Chi va là?»",
+      "cleaned": "Chi va là?",
+      "reason": "Replaced curly quotes with straight quotes",
+      "confidence": 1.0,
+      "start_offset": 95,
+      "end_offset": 105,
+      "needs_review": false
+    },
+    {
+      "original": "«Fatti vedere!»",
+      "cleaned": "Fatti vedere!",
+      "reason": "Added exclamation mark at the end of the sentence",
+      "confidence": 1.0,
+      "start_offset": 123,
+      "end_offset": 133,
+      "needs_review": false
+    },
+    {
+      "original": "«Ragazzi... guardate là!»",
+      "cleaned": "Ragazzi... guardate là!",
+      "reason": "Replaced curly quotes with straight quotes and added exclamation mark",
+      "confidence": 1.0,
+      "start_offset": 164,
+      "end_offset": 179,
+      "needs_review": false
+    },
+    {
+      "original": "Tic-tac, tic-tac...",
+      "cleaned": "Tic-tac, tic-tac",
+      "reason": "Removed trailing ellipsis",
+      "confidence": 1.0,
+      "start_offset": 313,
+      "end_offset": 323,
+      "needs_review": false
+    }
+  ],
+  "warnings": []
+}

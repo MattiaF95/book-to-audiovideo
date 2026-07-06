@@ -1,0 +1,1018 @@
+{
+  "job_id": "90f2e2f4328b44beb47dc7e7c4057aa5",
+  "book_id": "test-libro-tts",
+  "source_path": "data/output/90f2e2f4328b44beb47dc7e7c4057aa5/source/test-libro-tts.docx",
+  "source_name": "test-libro-tts.docx",
+  "source_type": ".docx",
+  "status": "failed",
+  "current_stage": "tts",
+  "raw_text": "«Non muoverti,» sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. «Credo che ci sia... qualcuno.»\nDall’angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.\n«Chi va là?» gridò Giulia, la voce che tradiva un brivido di terrore. Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro. «Fatti vedere!»\nL'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro. Guardò i due ragazzi e disse con calma piatta: «Cercate la verità? O volete solo... fuggire? La risposta costa 1.500 euro. Cash.»\nMarco sbuffò, incredulo. «Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?»\n«Ragazzi... guardate là!» interruppe Giulia, indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.\nL'uomo sorrise misteriosamente. «Il tempo stringe. Tic-tac, tic-tac...»",
+  "cleaned_text": "Non muoverti, sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. Credo che ci sia... qualcuno.\nDall'angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.\nChi va là? gridò Giulia, la voce che tradiva un brivido di terrore. Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro. Fatti vedere!\nL'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro. Guardò i due ragazzi e disse con calma piatta: Cercate la verità? O volete solo... fuggire? La risposta costa 1.500 euro. Cash.\nMarco sbuffò, incredulo. Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?\nRagazzi... guardate là! interruppe Giulia, indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.\nL'uomo sorrise misteriosamente. Il tempo stringe. Tic-tac, tic-tac...",
+  "cleanup_diff": [
+    {
+      "original": "«Non muoverti,»",
+      "cleaned": "Non muoverti,",
+      "reason": "Replaced curly quotes with straight quotes",
+      "confidence": 1.0,
+      "start_offset": 0,
+      "end_offset": 7,
+      "needs_review": false
+    },
+    {
+      "original": "«Credo che ci sia... qualcuno.»",
+      "cleaned": "Credo che ci sia... qualcuno.",
+      "reason": "Added period at the end of the sentence",
+      "confidence": 1.0,
+      "start_offset": 34,
+      "end_offset": 54,
+      "needs_review": false
+    },
+    {
+      "original": "«Chi va là?»",
+      "cleaned": "Chi va là?",
+      "reason": "Replaced curly quotes with straight quotes",
+      "confidence": 1.0,
+      "start_offset": 95,
+      "end_offset": 105,
+      "needs_review": false
+    },
+    {
+      "original": "«Fatti vedere!»",
+      "cleaned": "Fatti vedere!",
+      "reason": "Added exclamation mark at the end of the sentence",
+      "confidence": 1.0,
+      "start_offset": 123,
+      "end_offset": 133,
+      "needs_review": false
+    },
+    {
+      "original": "«Ragazzi... guardate là!»",
+      "cleaned": "Ragazzi... guardate là!",
+      "reason": "Replaced curly quotes with straight quotes and added exclamation mark",
+      "confidence": 1.0,
+      "start_offset": 164,
+      "end_offset": 179,
+      "needs_review": false
+    },
+    {
+      "original": "Tic-tac, tic-tac...",
+      "cleaned": "Tic-tac, tic-tac",
+      "reason": "Removed trailing ellipsis",
+      "confidence": 1.0,
+      "start_offset": 313,
+      "end_offset": 323,
+      "needs_review": false
+    }
+  ],
+  "cleanup_warnings": [],
+  "chunks": [
+    {
+      "chunk_id": "b9b2fa7fe095",
+      "text": "Non muoverti, sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. Credo che ci sia... qualcuno.\nDall'angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.\nChi va là? gridò Giulia, la voce che tradiva un brivido di terrore. Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro. Fatti vedere!\nL'ombra si mosse lentamente verso la luce della luna. Era un uomo alto, vestito con un cappotto logoro. Guardò i due ragazzi e disse con calma piatta: Cercate la verità? O volete solo... fuggire? La risposta costa 1.500 euro. Cash.\nMarco sbuffò, incredulo. Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?\nRagazzi... guardate là! interruppe Giulia, indicando lo schermo del computer sulla scrivania. Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.\nL'uomo sorrise misteriosamente. Il tempo stringe. Tic-tac, tic-tac...",
+      "order_index": 0,
+      "paragraph_start": 0,
+      "paragraph_end": 0,
+      "estimated_duration_seconds": 61.11111111111111
+    }
+  ],
+  "segments": [
+    {
+      "segment_id": "1",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Non muoverti, sussurrò Marco, stringendo la torcia spenta. Il battito del suo cuore risuonava nel silenzio della biblioteca. Credo che ci sia... qualcuno.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 0,
+      "end_offset": 143,
+      "emotion_hint": null,
+      "importance_score": 0.5
+    },
+    {
+      "segment_id": "2",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Dall'angolo buio della stanza giunse un rumore metallico. Clang. Poi, una risata sommessa, quasi impercettibile.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 144,
+      "end_offset": 266,
+      "emotion_hint": null,
+      "importance_score": 0.3
+    },
+    {
+      "segment_id": "3",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Chi va là?",
+      "segment_type": "dialogue",
+      "speaker_hint": "Giulia",
+      "resolved_speaker_id": "2",
+      "start_offset": 267,
+      "end_offset": 283,
+      "emotion_hint": "fear",
+      "importance_score": 0.8
+    },
+    {
+      "segment_id": "4",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Non era tipo da spaventarsi facilmente, ma quella situazione (assurda, se ci pensava bene) le stava togliendo il respiro.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 284,
+      "end_offset": 414,
+      "emotion_hint": null,
+      "importance_score": 0.4
+    },
+    {
+      "segment_id": "5",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Fatti vedere!",
+      "segment_type": "dialogue",
+      "speaker_hint": "Giulia",
+      "resolved_speaker_id": "2",
+      "start_offset": 415,
+      "end_offset": 429,
+      "emotion_hint": "anger",
+      "importance_score": 0.7
+    },
+    {
+      "segment_id": "6",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "L'ombra si mosse lentamente verso la luce della luna.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 430,
+      "end_offset": 463,
+      "emotion_hint": null,
+      "importance_score": 0.2
+    },
+    {
+      "segment_id": "7",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Era un uomo alto, vestito con un cappotto logoro.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 464,
+      "end_offset": 498,
+      "emotion_hint": null,
+      "importance_score": 0.1
+    },
+    {
+      "segment_id": "8",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Guardò i due ragazzi e disse con calma piatta: Cercate la verità? O volete solo... fuggire?",
+      "segment_type": "dialogue",
+      "speaker_hint": "mysterious man",
+      "resolved_speaker_id": "3",
+      "start_offset": 499,
+      "end_offset": 623,
+      "emotion_hint": "neutral",
+      "importance_score": 0.9
+    },
+    {
+      "segment_id": "9",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "La risposta costa 1.500 euro. Cash.",
+      "segment_type": "dialogue",
+      "speaker_hint": "mysterious man",
+      "resolved_speaker_id": "3",
+      "start_offset": 624,
+      "end_offset": 655,
+      "emotion_hint": "menace",
+      "importance_score": 0.8
+    },
+    {
+      "segment_id": "10",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Marco sbuffò, incredulo.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 656,
+      "end_offset": 683,
+      "emotion_hint": null,
+      "importance_score": 0.3
+    },
+    {
+      "segment_id": "11",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Millecinquecento euro? Tu sei pazzo! E poi, chi usa più i contanti nel 2026?",
+      "segment_type": "dialogue",
+      "speaker_hint": "Marco",
+      "resolved_speaker_id": "2",
+      "start_offset": 684,
+      "end_offset": 755,
+      "emotion_hint": "anger",
+      "importance_score": 0.8
+    },
+    {
+      "segment_id": "12",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Ragazzi... guardate là!",
+      "segment_type": "dialogue",
+      "speaker_hint": "Giulia",
+      "resolved_speaker_id": "2",
+      "start_offset": 756,
+      "end_offset": 774,
+      "emotion_hint": "excitement",
+      "importance_score": 0.7
+    },
+    {
+      "segment_id": "13",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "indicando lo schermo del computer sulla scrivania.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 775,
+      "end_offset": 808,
+      "emotion_hint": null,
+      "importance_score": 0.2
+    },
+    {
+      "segment_id": "14",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Il monitor si era acceso da solo, mostrando una sequenza infinita di codice: 01101001 01101110 01100110.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 809,
+      "end_offset": 876,
+      "emotion_hint": null,
+      "importance_score": 0.4
+    },
+    {
+      "segment_id": "15",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "L'uomo sorrise misteriosamente.",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 877,
+      "end_offset": 906,
+      "emotion_hint": null,
+      "importance_score": 0.1
+    },
+    {
+      "segment_id": "16",
+      "chunk_id": "b9b2fa7fe095",
+      "raw_text": "Il tempo stringe. Tic-tac, tic-tac...",
+      "segment_type": "narration",
+      "speaker_hint": null,
+      "resolved_speaker_id": "1",
+      "start_offset": 907,
+      "end_offset": 936,
+      "emotion_hint": null,
+      "importance_score": 0.2
+    }
+  ],
+  "speakers": [
+    {
+      "speaker_id": "narrator",
+      "name": "Narrator",
+      "role": "narrator",
+      "gender": "neutral",
+      "continuity_key": "narrator",
+      "preferred_voice_constraints": [
+        "clear",
+        "neutral"
+      ]
+    },
+    {
+      "speaker_id": "1",
+      "name": "Marco",
+      "role": "narrator",
+      "gender": "male",
+      "continuity_key": "Marco",
+      "preferred_voice_constraints": [
+        "neutral"
+      ]
+    },
+    {
+      "speaker_id": "2",
+      "name": "Giulia",
+      "role": "character",
+      "gender": "female",
+      "continuity_key": "Giulia",
+      "preferred_voice_constraints": [
+        "young"
+      ]
+    },
+    {
+      "speaker_id": "3",
+      "name": "Mysterious Man",
+      "role": "character",
+      "gender": "male",
+      "continuity_key": "Mysterious Man",
+      "preferred_voice_constraints": [
+        "mysterious"
+      ]
+    }
+  ],
+  "voice_assignments": [
+    {
+      "speaker_id": "narrator",
+      "voice_id": "JBFqnCBsd6RMkjVDRZzb",
+      "voice_name": "George - Warm, Captivating Storyteller",
+      "delivery_style": "narrative_story",
+      "tts_prompt_tags": [
+        "british"
+      ],
+      "continuity_anchor": "narrator"
+    },
+    {
+      "speaker_id": "1",
+      "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+      "voice_name": "Roger - Laid-Back, Casual, Resonant",
+      "delivery_style": "conversational",
+      "tts_prompt_tags": [
+        "american"
+      ],
+      "continuity_anchor": "Marco"
+    },
+    {
+      "speaker_id": "2",
+      "voice_id": "EXAVITQu4vr4xnSDxMaL",
+      "voice_name": "Sarah - Mature, Reassuring, Confident",
+      "delivery_style": "entertainment_tv",
+      "tts_prompt_tags": [
+        "american"
+      ],
+      "continuity_anchor": "Giulia"
+    },
+    {
+      "speaker_id": "3",
+      "voice_id": "FGY2WhTYpPnrIDTdsKH5",
+      "voice_name": "Laura - Enthusiast, Quirky Attitude",
+      "delivery_style": "social_media",
+      "tts_prompt_tags": [
+        "american"
+      ],
+      "continuity_anchor": "Mysterious Man"
+    }
+  ],
+  "pronunciation_overrides": [
+    {
+      "segment_id": "1",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "2",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "3",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "4",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "5",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "6",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "7",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "8",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "9",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "10",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "11",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "12",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "13",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "14",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "15",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    },
+    {
+      "segment_id": "16",
+      "pronunciation_overrides": {},
+      "phonetic_hints": {},
+      "problem_terms": [
+        "string"
+      ],
+      "confidence": 0.0
+    }
+  ],
+  "tone_tags": [
+    {
+      "segment_id": "1",
+      "tagged_text": "string",
+      "tags_used": [
+        "string"
+      ],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "2",
+      "tagged_text": "string",
+      "tags_used": [
+        "string"
+      ],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "3",
+      "tagged_text": "string",
+      "tags_used": [
+        "string"
+      ],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "4",
+      "tagged_text": "string",
+      "tags_used": [],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "5",
+      "tagged_text": "string",
+      "tags_used": [],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "6",
+      "tagged_text": "string",
+      "tags_used": [
+        "string"
+      ],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "7",
+      "tagged_text": "string",
+      "tags_used": [],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "8",
+      "tagged_text": "string",
+      "tags_used": [],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "9",
+      "tagged_text": "string",
+      "tags_used": [
+        "string"
+      ],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "10",
+      "tagged_text": "string",
+      "tags_used": [],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "11",
+      "tagged_text": "string",
+      "tags_used": [],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "12",
+      "tagged_text": "string",
+      "tags_used": [
+        "string"
+      ],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "13",
+      "tagged_text": "string",
+      "tags_used": [],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "14",
+      "tagged_text": "string",
+      "tags_used": [
+        "string"
+      ],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "15",
+      "tagged_text": "string",
+      "tags_used": [
+        "string"
+      ],
+      "tag_confidence": 0.0
+    },
+    {
+      "segment_id": "16",
+      "tagged_text": "string",
+      "tags_used": [],
+      "tag_confidence": 0.0
+    }
+  ],
+  "media_plan": [
+    {
+      "segment_id": "1",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "2",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "3",
+      "video_keywords": [
+        "stock footage",
+        "stock video"
+      ],
+      "sfx_keywords": [
+        "sound effects",
+        "fx"
+      ],
+      "mood": "neutral",
+      "scene_type": "general",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "4",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "5",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "6",
+      "video_keywords": [
+        "stock",
+        "search"
+      ],
+      "sfx_keywords": [
+        "background",
+        "music"
+      ],
+      "mood": "neutral",
+      "scene_type": "general",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "7",
+      "video_keywords": [
+        "stock footage",
+        "stock video"
+      ],
+      "sfx_keywords": [
+        "sound effects",
+        "fx"
+      ],
+      "mood": "neutral",
+      "scene_type": "general",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "8",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "9",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "10",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "11",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "12",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "13",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "14",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "15",
+      "video_keywords": [
+        "string"
+      ],
+      "sfx_keywords": [
+        "string"
+      ],
+      "mood": "string",
+      "scene_type": "string",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    },
+    {
+      "segment_id": "16",
+      "video_keywords": [
+        "stock",
+        "search"
+      ],
+      "sfx_keywords": [
+        "background",
+        "music"
+      ],
+      "mood": "neutral",
+      "scene_type": "general",
+      "media_intensity": "low",
+      "needs_sfx": false,
+      "sfx_timeline_hint": null
+    }
+  ],
+  "downloaded_media": [
+    {
+      "provider": "pixabay",
+      "query": "string",
+      "asset_id": "139",
+      "media_type": "video",
+      "source_url": "https://cdn.pixabay.com/video/2015/08/08/139-135737102_medium.mp4",
+      "local_path": "data/output/90f2e2f4328b44beb47dc7e7c4057aa5/media/video/video_139.mp4",
+      "duration_seconds": null,
+      "metadata": {
+        "tags": "guitarist, acoustic guitar, musical instrument, music, melody, strumming, string instrument, strings, harmony, guitar playing, making music, sitting, relaxing",
+        "user": "Coverr-Free-Footage"
+      }
+    }
+  ],
+  "tts_outputs": [],
+  "mixed_audio_paths": [],
+  "final_video_path": null,
+  "manifest_path": null,
+  "warnings": [],
+  "errors": [
+    "TTS fallita su tutti i modelli fallback: eleven_v3: 400 {\"detail\":{\"type\":\"validation_error\",\"code\":\"unsupported_model\",\"message\":\"Providing previous_request_ids or next_request_ids is not yet supported with the 'eleven_v3' model.\",\"status\":\"unsupported_model\",\"request_id\":\"9bfe72c86be1cc13425cd0298c27dda8\",\"param\":\"model_id\"}} | eleven_turbo_v2_5: 400 {\"detail\":{\"type\":\"validation_error\",\"code\":\"invalid_parameters\",\"message\":\"A maximum of 3 previous_history_item_ids can be sent but received 4 items.\",\"status\":\"too_many_history_item_ids\",\"request_id\":\"240bf3b1351e334ae1ab691d62a662d5\",\"param\":\"previous_history_item_ids\"}} | eleven_multilingual_v2: 400 {\"detail\":{\"type\":\"validation_error\",\"code\":\"invalid_parameters\",\"message\":\"A maximum of 3 previous_history_item_ids can be sent but received 4 items.\",\"status\":\"too_many_history_item_ids\",\"request_id\":\"be151096c8f3b8593f32d9ff5860c6b2\",\"param\":\"previous_history_item_ids\"}}"
+  ],
+  "metrics": {
+    "started_at": "2026-07-06T13:58:00.372694+00:00",
+    "finished_at": "2026-07-06T13:59:41.426842+00:00",
+    "total_duration_seconds": null,
+    "last_updated_at": "2026-07-06T13:59:41.426908+00:00"
+  },
+  "events": [
+    {
+      "timestamp": "2026-07-06T13:58:00.384118+00:00",
+      "stage": "queued",
+      "status": "queued",
+      "message": "File caricato: test-libro-tts.docx"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:00.387071+00:00",
+      "stage": "queued",
+      "status": "running",
+      "message": "Pipeline avviata"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:00.388615+00:00",
+      "stage": "ingestion",
+      "status": "running",
+      "message": "Stage avviato: ingestion"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:00.428101+00:00",
+      "stage": "ingestion",
+      "status": "completed",
+      "message": "Stage completato: ingestion"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:00.429691+00:00",
+      "stage": "cleanup",
+      "status": "running",
+      "message": "Stage avviato: cleanup"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:01.988277+00:00",
+      "stage": "cleanup",
+      "status": "completed",
+      "message": "Stage completato: cleanup"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:01.988613+00:00",
+      "stage": "chunking",
+      "status": "running",
+      "message": "Stage avviato: chunking"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:01.989058+00:00",
+      "stage": "chunking",
+      "status": "completed",
+      "message": "Stage completato: chunking"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:01.991392+00:00",
+      "stage": "dialogue_segmentation",
+      "status": "running",
+      "message": "Stage avviato: dialogue_segmentation"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:05.471177+00:00",
+      "stage": "dialogue_segmentation",
+      "status": "completed",
+      "message": "Stage completato: dialogue_segmentation"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:05.471717+00:00",
+      "stage": "speaker_resolution",
+      "status": "running",
+      "message": "Stage avviato: speaker_resolution"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:06.354709+00:00",
+      "stage": "speaker_resolution",
+      "status": "completed",
+      "message": "Stage completato: speaker_resolution"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:06.355727+00:00",
+      "stage": "voice_assignment",
+      "status": "running",
+      "message": "Stage avviato: voice_assignment"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:08.647846+00:00",
+      "stage": "voice_assignment",
+      "status": "completed",
+      "message": "Stage completato: voice_assignment"
+    },
+    {
+      "timestamp": "2026-07-06T13:58:08.649297+00:00",
+      "stage": "segment_enrichment",
+      "status": "running",
+      "message": "Stage avviato: segment_enrichment"
+    },
+    {
+      "timestamp": "2026-07-06T13:59:26.382858+00:00",
+      "stage": "segment_enrichment",
+      "status": "completed",
+      "message": "Stage completato: segment_enrichment"
+    },
+    {
+      "timestamp": "2026-07-06T13:59:26.384176+00:00",
+      "stage": "media_fetch",
+      "status": "running",
+      "message": "Stage avviato: media_fetch"
+    },
+    {
+      "timestamp": "2026-07-06T13:59:31.343262+00:00",
+      "stage": "media_fetch",
+      "status": "completed",
+      "message": "Stage completato: media_fetch"
+    },
+    {
+      "timestamp": "2026-07-06T13:59:31.343870+00:00",
+      "stage": "tts",
+      "status": "running",
+      "message": "Stage avviato: tts"
+    },
+    {
+      "timestamp": "2026-07-06T13:59:41.426885+00:00",
+      "stage": "tts",
+      "status": "failed",
+      "message": "TTS fallita su tutti i modelli fallback: eleven_v3: 400 {\"detail\":{\"type\":\"validation_error\",\"code\":\"unsupported_model\",\"message\":\"Providing previous_request_ids or next_request_ids is not yet supported with the 'eleven_v3' model.\",\"status\":\"unsupported_model\",\"request_id\":\"9bfe72c86be1cc13425cd0298c27dda8\",\"param\":\"model_id\"}} | eleven_turbo_v2_5: 400 {\"detail\":{\"type\":\"validation_error\",\"code\":\"invalid_parameters\",\"message\":\"A maximum of 3 previous_history_item_ids can be sent but received 4 items.\",\"status\":\"too_many_history_item_ids\",\"request_id\":\"240bf3b1351e334ae1ab691d62a662d5\",\"param\":\"previous_history_item_ids\"}} | eleven_multilingual_v2: 400 {\"detail\":{\"type\":\"validation_error\",\"code\":\"invalid_parameters\",\"message\":\"A maximum of 3 previous_history_item_ids can be sent but received 4 items.\",\"status\":\"too_many_history_item_ids\",\"request_id\":\"be151096c8f3b8593f32d9ff5860c6b2\",\"param\":\"previous_history_item_ids\"}}"
+    }
+  ],
+  "attention_request": null,
+  "artifact_dir": "data/output/90f2e2f4328b44beb47dc7e7c4057aa5",
+  "speaker_last_request_ids": {
+    "1": [
+      "skEslJ8KJDihew3t3lGq",
+      "3vOsRMMQxnc1Eu8ULOGV",
+      "EqkZJxTf4D8myyzE601l",
+      "f2dyHjPWaHSNEiP56Sjr"
+    ],
+    "2": [
+      "ZQG0pLNlLLVfii5zVNpa",
+      "wtBhfHPIasJuzsxkQgql"
+    ]
+  },
+  "source_uploaded": true,
+  "stop_requested": false
+}
