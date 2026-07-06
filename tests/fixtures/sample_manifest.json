@@ -1,0 +1,14 @@
+{
+  "book_id": "sample-book",
+  "source_name": "sample_book.txt",
+  "final_video_path": "data/output/sample-book.mp4",
+  "generated_at": "2026-07-06T00:00:00Z",
+  "speakers": [],
+  "voice_assignments": [],
+  "media_assets": [],
+  "tts_outputs": [],
+  "mixed_audio": [],
+  "decisions": [],
+  "warnings": [],
+  "errors": []
+}

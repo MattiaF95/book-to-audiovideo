@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book to Audiovideo</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Pipeline locale</p>
+        <h1>Book to Audiovideo Control Room</h1>
+        <p class="lead">Carica un libro, osserva ogni agent in tempo reale, approva gli stop manuali e apri il video finale appena pronto.</p>
+        <div class="workflow-card">
+          <h2>Workflow</h2>
+          <div class="workflow-steps">
+            <div class="workflow-step"><strong>1. Upload</strong><span>Carichi un file e nasce un job.</span></div>
+            <div class="workflow-step"><strong>2. Analisi</strong><span>Cleanup, segmentazione, speaker e enrichment LLM.</span></div>
+            <div class="workflow-step"><strong>3. Media</strong><span>Ricerca video unico, SFX eventuali e TTS.</span></div>
+            <div class="workflow-step"><strong>4. Export</strong><span>Mix audio, video finale, QA e manifest.</span></div>
+          </div>
+        </div>
+      </div>
+      <form id="upload-form" class="upload-card">
+        <label class="upload-drop">
+          <input type="file" name="file" id="file-input" accept=".txt,.md,.pdf,.docx" required>
+          <span id="file-label">Trascina o seleziona un file `.txt`, `.md`, `.pdf`, `.docx`</span>
+        </label>
+        <div class="upload-meta">
+          <span id="upload-status">Nessun file selezionato</span>
+          <button id="submit-button" type="submit" disabled>Avvia job</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Job</h2>
+          <span id="jobs-count">{{ jobs|length }}</span>
+        </div>
+        <div id="jobs-list" class="jobs-list">
+          {% for job in jobs %}
+          <button class="job-pill" data-job-id="{{ job.job_id }}">{{ job.source_name }} · {{ job.status }}</button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="panel focus-panel">
+        <div class="panel-head">
+          <h2>Stato job</h2>
+          <span id="job-status">Nessun job selezionato</span>
+        </div>
+        <div id="job-explainer" class="job-explainer empty">
+          Seleziona un job per vedere fase corrente, significato dello step attivo e stato finale atteso.
+        </div>
+        <div id="job-summary" class="job-summary empty">
+          Seleziona un job per vedere se il file è stato caricato, quale stage è attivo e se il job sta realmente lavorando.
+        </div>
+        <div id="job-detail" class="job-detail empty">
+          Seleziona un job per vedere agent, eventi e risultato finale.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

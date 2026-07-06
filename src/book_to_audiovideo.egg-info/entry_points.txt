@@ -1,0 +1,2 @@
+[console_scripts]
+book-to-audiovideo = book_to_audiovideo.main:run

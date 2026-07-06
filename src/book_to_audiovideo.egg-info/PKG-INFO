@@ -1,0 +1,132 @@
+Metadata-Version: 2.4
+Name: book-to-audiovideo
+Version: 0.1.0
+Summary: Pipeline locale per trasformare libri in video narrati con provider API esterni.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: fastapi>=0.116.0
+Requires-Dist: uvicorn[standard]>=0.35.0
+Requires-Dist: jinja2>=3.1.4
+Requires-Dist: python-multipart>=0.0.9
+Requires-Dist: pydantic>=2.8.2
+Requires-Dist: pydantic-settings>=2.3.4
+Requires-Dist: httpx>=0.27.0
+Requires-Dist: tenacity>=8.5.0
+Requires-Dist: orjson>=3.10.7
+Requires-Dist: python-docx>=1.1.2
+Requires-Dist: pypdf>=4.3.1
+Provides-Extra: dev
+Requires-Dist: pytest>=8.3.2; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.23.8; extra == "dev"
+
+# Book to Audiovideo
+
+Pipeline locale MVP-first per trasformare un libro in un video narrato usando solo provider API esterni: Gemini per analisi testo, ElevenLabs per TTS, Pixabay per video/SFX e FFmpeg per il compositing finale.
+
+## Cosa fa
+
+- carica file `txt`, `md`, `pdf`, `docx`
+- pulisce il testo con Gemini in modo conservativo
+- spezza il testo in chunk e segmenti `narration/dialogue`
+- risolve speaker, gender probabile e voce coerente
+- decide se servono SFX per ciascun segmento
+- cerca un video di sfondo unico e lo mette in loop fino alla durata dell’audio finale
+- genera il parlato con ElevenLabs usando `eleven_v3` e fallback ai modelli secondari
+- mixa voce e SFX con volume effetti ridotto
+- esporta `manifest.json`, artefatti intermedi e video finale
+
+## Architettura
+
+- `src/book_to_audiovideo/agents/`: 15 agent piccoli, uno per responsabilità
+- `src/book_to_audiovideo/providers/`: adapter live Gemini, ElevenLabs, Pixabay
+- `src/book_to_audiovideo/services/`: parsing file, chunking, FFmpeg, durata, query media
+- `src/book_to_audiovideo/pipeline/orchestrator.py`: stato job, persistenza, resume e pause manuali
+- `src/book_to_audiovideo/web/`: dashboard locale FastAPI + template/static frontend
+
+## Dashboard locale
+
+La dashboard permette di:
+
+- caricare il file sorgente
+- vedere lo stato di ogni agent e gli eventi del job
+- approvare o rifiutare stop manuali `needs_attention`
+- aprire il video finale generato
+
+Avvio:
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+pip install -e ".[dev]"
+cp .env.example .env
+python -m book_to_audiovideo.main serve
+```
+
+Poi apri `http://127.0.0.1:8000`.
+
+## Esecuzione CLI
+
+Per eseguire un job senza dashboard:
+
+```bash
+python -m book_to_audiovideo.main run path/al/libro.txt
+```
+
+## Variabili ambiente
+
+- `GEMINI_API_KEY`
+- `ELEVENLABS_API_KEY`
+- `PIXABAY_API_KEY`
+- `OUTPUT_DIR`
+- `CACHE_DIR`
+- `LOG_LEVEL`
+- `DEFAULT_TTS_MODEL`
+- `DEFAULT_GEMINI_MODEL`
+- `FFMPEG_BIN`
+- `FFPROBE_BIN`
+
+## Flusso pipeline
+
+1. `ingestion`
+2. `cleanup`
+3. `chunking`
+4. `dialogue_segmentation`
+5. `speaker_resolution`
+6. `voice_assignment`
+7. `pronunciation`
+8. `tone_tagging`
+9. `media_planning`
+10. `media_fetch`
+11. `tts`
+12. `audio_mix`
+13. `video_compose`
+14. `qa`
+15. `manifest`
+
+## Artefatti output
+
+Ogni job crea `data/output/<job_id>/` con:
+
+- `state.json`
+- JSON stage-by-stage
+- `source/`
+- `media/video/` e `media/sfx/`
+- `tts/`
+- `mix/`
+- `final/<book_id>.mp4`
+- `manifest.json`
+
+## Note operative
+
+- La pipeline non continua in loop quando un provider fallisce.
+- Se Pixabay non restituisce media utilizzabile, il job entra in `needs_attention`.
+- Gli SFX vengono messi sotto la voce; se il segmento non richiede effetti, sotto la voce resta silenzio.
+- Il video di sfondo è unico; se più corto viene loopato da FFmpeg.
+- Gli endpoint ElevenLabs relativi a voci pubbliche possono evolvere: l’adapter è isolato proprio per poterlo correggere senza toccare gli agent.
+
+## Limiti MVP
+
+- I test sono offline e mockano il comportamento strutturale, non le API esterne.
+- L’endpoint Pixabay per audio può variare o non essere disponibile in alcuni piani/API surface.
+- La scelta automatica della voce dipende dalle voci disponibili nel tuo account e nella voice library.
+- La dashboard per ora gestisce solo upload, monitoraggio, approve/reject e apertura output finale.
