@@ -32,16 +32,13 @@ class PixabayClient(StockMediaProvider):
 
     @retryable()
     async def download_media(self, asset: dict[str, Any], target_dir: str, media_type: str, query: str) -> MediaAsset:
+        if media_type != "video":
+            raise ProviderError(f"Pixabay supporta solo video di sfondo, richiesto media_type={media_type!r}")
         target_path = Path(target_dir)
         target_path.mkdir(parents=True, exist_ok=True)
-        if media_type == "video":
-            source_url = self._best_video_url(asset)
-            extension = ".mp4"
-            asset_id = str(asset["id"])
-        else:
-            source_url = asset.get("audio") or asset.get("previewURL") or asset.get("url")
-            extension = ".mp3"
-            asset_id = str(asset["id"])
+        source_url = self._best_video_url(asset)
+        extension = ".mp4"
+        asset_id = str(asset["id"])
         if not source_url:
             raise ProviderError(f"Asset Pixabay privo di url scaricabile: {asset}")
         local_path = target_path / f"{media_type}_{asset_id}{extension}"
@@ -57,7 +54,7 @@ class PixabayClient(StockMediaProvider):
             provider="pixabay",
             query=query,
             asset_id=asset_id,
-            media_type="video" if media_type == "video" else "audio",
+            media_type="video",
             source_url=source_url,
             local_path=str(local_path),
             duration_seconds=None,
