@@ -8,15 +8,22 @@ from pathlib import Path
 from uuid import uuid4
 
 from book_to_audiovideo.agents.audio_mix_agent import AudioMixAgent
-from book_to_audiovideo.agents.audio_planning_agent import AudioPlanningAgent
+from book_to_audiovideo.agents.dialogue_segmentation_agent import DialogueSegmentationAgent
 from book_to_audiovideo.agents.ingestion_agent import IngestionAgent
 from book_to_audiovideo.agents.manifest_agent import ManifestAgent
 from book_to_audiovideo.agents.media_fetch_agent import MediaFetchAgent
+from book_to_audiovideo.agents.media_planning_agent import MediaPlanningAgent
+from book_to_audiovideo.agents.narrative_annotation_agent import NarrativeAnnotationAgent
+from book_to_audiovideo.agents.narrative_context_agent import NarrativeContextAgent
+from book_to_audiovideo.agents.pronunciation_planning_agent import PronunciationPlanningAgent
+from book_to_audiovideo.agents.prosody_planning_agent import ProsodyPlanningAgent
 from book_to_audiovideo.agents.qa_agent import QAAgent
-from book_to_audiovideo.agents.story_structure_agent import StoryStructureAgent
-from book_to_audiovideo.agents.text_preparation_agent import TextPreparationAgent
+from book_to_audiovideo.agents.speaker_attribution_agent import SpeakerAttributionAgent
+from book_to_audiovideo.agents.speaker_registry_agent import SpeakerRegistryAgent
+from book_to_audiovideo.agents.text_cleanup_agent import TextCleanupAgent
 from book_to_audiovideo.agents.tts_agent import TTSAgent
 from book_to_audiovideo.agents.video_compose_agent import VideoComposeAgent
+from book_to_audiovideo.agents.voice_casting_agent import VoiceCastingAgent
 from book_to_audiovideo.config import Settings
 from book_to_audiovideo.models.domain import AttentionRequest, JobEvent, JobStatus
 from book_to_audiovideo.models.state import PipelineState
@@ -87,9 +94,16 @@ class PipelineOrchestrator:
     def _build_agents(self) -> list[object]:
         return [
             IngestionAgent(self.file_service),
-            TextPreparationAgent(self.llm),
-            StoryStructureAgent(self.llm),
-            AudioPlanningAgent(self.llm, self.tts),
+            TextCleanupAgent(self.llm),
+            NarrativeContextAgent(self.llm),
+            DialogueSegmentationAgent(self.llm),
+            SpeakerRegistryAgent(self.llm),
+            SpeakerAttributionAgent(self.llm),
+            NarrativeAnnotationAgent(self.llm),
+            VoiceCastingAgent(self.llm, self.tts),
+            PronunciationPlanningAgent(self.llm),
+            ProsodyPlanningAgent(self.llm),
+            MediaPlanningAgent(self.llm),
             MediaFetchAgent(self.media, self.media_service),
             TTSAgent(self.tts, self.duration_service),
             AudioMixAgent(self.ffmpeg_service),

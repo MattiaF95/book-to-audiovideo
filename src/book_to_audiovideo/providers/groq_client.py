@@ -36,6 +36,16 @@ class GroqClient(LLMProvider):
             "text_preparation.md": settings.groq_cleanup_token_budget,
             "story_structure.md": settings.groq_segment_token_budget,
             "audio_planning.md": settings.groq_media_token_budget,
+            "text_cleanup.md": settings.groq_cleanup_token_budget,
+            "narrative_context.md": settings.groq_enrichment_token_budget,
+            "dialogue_segmentation.md": settings.groq_segment_token_budget,
+            "speaker_registry.md": settings.groq_segment_token_budget,
+            "speaker_attribution.md": settings.groq_segment_token_budget,
+            "narrative_annotation.md": settings.groq_enrichment_token_budget,
+            "voice_casting.md": settings.groq_voice_token_budget,
+            "pronunciation_planning.md": settings.groq_pronunciation_token_budget,
+            "prosody_planning.md": settings.groq_tone_token_budget,
+            "media_planning.md": settings.groq_media_token_budget,
         }
 
     def _load_prompt(self, name: str) -> str:
@@ -50,7 +60,21 @@ class GroqClient(LLMProvider):
     def _request_reservation(self, prompt_name: str, prompt_text: str, payload_text: str) -> int:
         prompt_budget = self._budget_for(prompt_name)
         estimated_tokens = self._estimate_tokens(prompt_text) + self._estimate_tokens(payload_text)
-        if prompt_name in {"text_preparation.md", "story_structure.md", "audio_planning.md"}:
+        if prompt_name in {
+            "text_preparation.md",
+            "story_structure.md",
+            "audio_planning.md",
+            "text_cleanup.md",
+            "narrative_context.md",
+            "dialogue_segmentation.md",
+            "speaker_registry.md",
+            "speaker_attribution.md",
+            "narrative_annotation.md",
+            "voice_casting.md",
+            "pronunciation_planning.md",
+            "prosody_planning.md",
+            "media_planning.md",
+        }:
             requested = max(estimated_tokens + 200, prompt_budget)
         else:
             requested = min(prompt_budget, max(estimated_tokens + 200, 300))
@@ -74,10 +98,37 @@ class GroqClient(LLMProvider):
     def _compact_payload(self, prompt_name: str, payload: dict[str, Any]) -> dict[str, Any]:
         if prompt_name == "text_preparation.md":
             return {"text": payload.get("text", "")}
+        if prompt_name == "text_cleanup.md":
+            return {"text": payload.get("text", "")}
+        if prompt_name == "narrative_context.md":
+            return {"corrected_text": payload.get("corrected_text", "")}
         if prompt_name == "story_structure.md":
             return {
                 "corrected_text": payload.get("corrected_text", ""),
                 "context": payload.get("context", {}),
+            }
+        if prompt_name == "dialogue_segmentation.md":
+            return {
+                "corrected_text": payload.get("corrected_text", ""),
+                "context": payload.get("context", {}),
+            }
+        if prompt_name == "speaker_registry.md":
+            return {
+                "corrected_text": payload.get("corrected_text", ""),
+                "context": payload.get("context", {}),
+            }
+        if prompt_name == "speaker_attribution.md":
+            return {
+                "corrected_text": payload.get("corrected_text", ""),
+                "context": payload.get("context", {}),
+                "speakers": [self._compact_speaker(item) for item in payload.get("speakers", [])],
+                "segments": [self._compact_segment(item) for item in payload.get("segments", [])],
+            }
+        if prompt_name == "narrative_annotation.md":
+            return {
+                "context": payload.get("context", {}),
+                "speakers": [self._compact_speaker(item) for item in payload.get("speakers", [])],
+                "segments": [self._compact_segment(item) for item in payload.get("segments", [])],
             }
         if prompt_name == "audio_planning.md":
             return {
@@ -86,6 +137,28 @@ class GroqClient(LLMProvider):
                 "speakers": [self._compact_speaker(item) for item in payload.get("speakers", [])],
                 "segments": [self._compact_segment(item) for item in payload.get("segments", [])],
                 "available_voices": [self._compact_voice(item) for item in payload.get("available_voices", [])],
+            }
+        if prompt_name == "voice_casting.md":
+            return {
+                "context": payload.get("context", {}),
+                "speakers": [self._compact_speaker(item) for item in payload.get("speakers", [])],
+                "available_voices": [self._compact_voice(item) for item in payload.get("available_voices", [])],
+            }
+        if prompt_name == "pronunciation_planning.md":
+            return {
+                "segments": [self._compact_segment(item) for item in payload.get("segments", [])],
+                "speakers": [self._compact_speaker(item) for item in payload.get("speakers", [])],
+            }
+        if prompt_name == "prosody_planning.md":
+            return {
+                "context": payload.get("context", {}),
+                "segments": [self._compact_segment(item) for item in payload.get("segments", [])],
+                "speakers": [self._compact_speaker(item) for item in payload.get("speakers", [])],
+            }
+        if prompt_name == "media_planning.md":
+            return {
+                "context": payload.get("context", {}),
+                "segments": [self._compact_segment(item) for item in payload.get("segments", [])],
             }
         return self._truncate_value(payload, max_chars=self._budget_for(prompt_name) * 4)
 
@@ -209,7 +282,21 @@ class GroqClient(LLMProvider):
         payload_text = json.dumps(compact_payload, ensure_ascii=False)
         estimated_tokens = self._estimate_tokens(prompt) + self._estimate_tokens(payload_text)
         if estimated_tokens > prompt_budget:
-            if prompt_name in {"text_preparation.md", "story_structure.md", "audio_planning.md"}:
+            if prompt_name in {
+                "text_preparation.md",
+                "story_structure.md",
+                "audio_planning.md",
+                "text_cleanup.md",
+                "narrative_context.md",
+                "dialogue_segmentation.md",
+                "speaker_registry.md",
+                "speaker_attribution.md",
+                "narrative_annotation.md",
+                "voice_casting.md",
+                "pronunciation_planning.md",
+                "prosody_planning.md",
+                "media_planning.md",
+            }:
                 LOGGER.debug("Groq payload over budget for %s but skipping truncation by design", prompt_name)
             else:
                 LOGGER.debug(
@@ -275,6 +362,9 @@ class GroqClient(LLMProvider):
             await asyncio.sleep(wait_for)
             backoff_seconds = min(backoff_seconds * 2, 8.0)
         raise ProviderError("Groq fallito su tutti i tentativi: " + " | ".join(errors))
+
+    async def run_task(self, prompt_name: str, payload: dict[str, Any]) -> dict[str, Any]:
+        return await self._structured_generate(prompt_name, payload)
 
     async def prepare_text(self, payload: dict[str, Any]) -> dict[str, Any]:
         return await self._structured_generate("text_preparation.md", payload)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 from pathlib import Path
 
 from book_to_audiovideo.agents.base import BaseAgent
@@ -28,7 +29,7 @@ class MediaFetchAgent(BaseAgent):
                 hits = await self.media_provider.search_videos(query)
                 if not hits:
                     continue
-                video_asset = await self.media_provider.download_media(hits[0], str(media_dir / "video"), "video", query)
+                video_asset = await self.media_provider.download_media(random.choice(hits), str(media_dir / "video"), "video", query)
                 context.state.downloaded_media = [video_asset]
                 self.write_stage_json(
                     context,

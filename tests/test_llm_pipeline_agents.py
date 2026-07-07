@@ -3,7 +3,12 @@ from pathlib import Path
 import anyio
 
 from book_to_audiovideo.agents.base import BaseAgent
+from book_to_audiovideo.agents.dialogue_segmentation_agent import DialogueSegmentationAgent
 from book_to_audiovideo.agents.manifest_agent import ManifestAgent
+from book_to_audiovideo.agents.narrative_context_agent import NarrativeContextAgent
+from book_to_audiovideo.agents.speaker_attribution_agent import SpeakerAttributionAgent
+from book_to_audiovideo.agents.speaker_registry_agent import SpeakerRegistryAgent
+from book_to_audiovideo.agents.text_cleanup_agent import TextCleanupAgent
 from book_to_audiovideo.agents.audio_planning_agent import AudioPlanningAgent
 from book_to_audiovideo.agents.story_structure_agent import StoryStructureAgent
 from book_to_audiovideo.agents.text_preparation_agent import TextPreparationAgent
@@ -18,7 +23,12 @@ class _FakeLLMProvider:
         self.prepare_response = prepare_response or {}
         self.structure_response = structure_response or {}
         self.plan_response = plan_response or {}
+        self.task_responses: dict[str, dict] = {}
         self.calls: list[tuple[str, dict]] = []
+
+    async def run_task(self, prompt_name: str, payload: dict) -> dict:
+        self.calls.append((prompt_name, payload))
+        return self.task_responses.get(prompt_name, {})
 
     async def prepare_text(self, payload: dict) -> dict:
         self.calls.append(("prepare_text", payload))
@@ -283,3 +293,79 @@ def test_each_agent_writes_stage_manifest_and_final_manifest(tmp_path: Path) -> 
     assert (tmp_path / "job" / "manifests" / "ingestion.json").exists()
     assert (tmp_path / "job" / "manifests" / "manifest.json").exists()
     assert (tmp_path / "job" / "manifest.json").exists()
+
+
+def test_refactored_narrative_agents_build_stable_segments_and_speakers(tmp_path: Path) -> None:
+    settings = Settings(OUTPUT_DIR=tmp_path, CACHE_DIR=tmp_path / "cache")
+    state = PipelineState(
+        job_id="job-1",
+        book_id="book-1",
+        source_path=str(tmp_path / "source.txt"),
+        source_name="source.txt",
+        source_type=".txt",
+        artifact_dir=str(tmp_path / "job"),
+        raw_text="Testo",
+    )
+    context = PipelineContext(settings=settings, state=state)
+    provider = _FakeLLMProvider()
+    provider.task_responses = {
+        "text_cleanup.md": {"corrected_text": "«Ciao» disse Marco. Poi il narratore continua.", "corrections": [], "warnings": []},
+        "narrative_context.md": {"context": {"scene": "dialogo", "tone": "calmo", "setting": "interno", "time_period": None}},
+        "dialogue_segmentation.md": {
+            "segments": [
+                {
+                    "segment_id": "seg-1",
+                    "order_index": 1,
+                    "raw_text": "«Ciao» disse Marco.",
+                    "segment_type": "dialogue",
+                    "start_offset": 0,
+                    "end_offset": 20,
+                },
+                {
+                    "segment_id": "seg-2",
+                    "order_index": 2,
+                    "raw_text": "Poi il narratore continua.",
+                    "segment_type": "narration",
+                    "start_offset": 21,
+                    "end_offset": 50,
+                },
+            ]
+        },
+        "speaker_registry.md": {
+            "speakers": [
+                {
+                    "speaker_id": "narrator",
+                    "name": "Narrator",
+                    "role": "narrator",
+                    "gender": None,
+                    "continuity_key": "narrator",
+                    "preferred_voice_constraints": ["clear"],
+                },
+                {
+                    "speaker_id": "marco",
+                    "name": "Marco",
+                    "role": "character",
+                    "gender": "male",
+                    "continuity_key": "marco",
+                    "preferred_voice_constraints": ["warm"],
+                },
+            ]
+        },
+        "speaker_attribution.md": {
+            "assignments": [
+                {"segment_id": "seg-1", "speaker_hint": "Marco", "resolved_speaker_id": "marco"},
+                {"segment_id": "seg-2", "speaker_hint": None, "resolved_speaker_id": "narrator"},
+            ]
+        },
+    }
+
+    anyio.run(TextCleanupAgent(provider).execute, context)
+    anyio.run(NarrativeContextAgent(provider).execute, context)
+    anyio.run(DialogueSegmentationAgent(provider).execute, context)
+    anyio.run(SpeakerRegistryAgent(provider).execute, context)
+    anyio.run(SpeakerAttributionAgent(provider).execute, context)
+
+    assert context.state.cleaned_text.startswith("«Ciao»")
+    assert context.state.text_context["scene"] == "dialogo"
+    assert [segment.resolved_speaker_id for segment in context.state.segments] == ["marco", "narrator"]
+    assert [speaker.speaker_id for speaker in context.state.speakers] == ["narrator", "marco"]

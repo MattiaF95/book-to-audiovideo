@@ -8,6 +8,10 @@ from book_to_audiovideo.models.domain import MediaAsset, TTSOutput, VoiceAssignm
 
 class LLMProvider(ABC):
     @abstractmethod
+    async def run_task(self, prompt_name: str, payload: dict[str, Any]) -> dict[str, Any]:
+        raise NotImplementedError
+
+    @abstractmethod
     async def prepare_text(self, payload: dict[str, Any]) -> dict[str, Any]:
         raise NotImplementedError
 
