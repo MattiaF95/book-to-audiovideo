@@ -36,7 +36,7 @@ class PixabayClient(StockMediaProvider):
             raise ProviderError(f"Pixabay supporta solo video di sfondo, richiesto media_type={media_type!r}")
         target_path = Path(target_dir)
         target_path.mkdir(parents=True, exist_ok=True)
-        source_url = self._best_video_url(asset)
+        source_url = self._preferred_video_url(asset)
         extension = ".mp4"
         asset_id = str(asset["id"])
         if not source_url:
@@ -62,21 +62,13 @@ class PixabayClient(StockMediaProvider):
         )
 
     @staticmethod
-    def _best_video_url(asset: dict[str, Any]) -> str | None:
+    def _preferred_video_url(asset: dict[str, Any]) -> str | None:
         variants = asset.get("videos", {})
-        best_url = None
-        best_score = -1
+        for preferred_key in ("medium", "large", "small"):
+            item = variants.get(preferred_key)
+            if isinstance(item, dict) and item.get("url"):
+                return str(item["url"])
         for item in variants.values():
-            if not isinstance(item, dict):
-                continue
-            url = item.get("url")
-            if not url:
-                continue
-            width = int(item.get("width") or 0)
-            height = int(item.get("height") or 0)
-            size = int(item.get("size") or 0)
-            score = max(width * height, size)
-            if score > best_score:
-                best_score = score
-                best_url = url
-        return best_url
+            if isinstance(item, dict) and item.get("url"):
+                return str(item["url"])
+        return None

@@ -5,6 +5,7 @@ def test_segment_model_supports_dialogue_and_narration() -> None:
     segment = Segment(
         segment_id="s1",
         chunk_id="c1",
+        order_index=1,
         raw_text='"Ciao", disse Luca.',
         segment_type=SegmentType.dialogue,
         speaker_hint="Luca",

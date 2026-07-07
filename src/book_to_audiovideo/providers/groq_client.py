@@ -96,7 +96,7 @@ class GroqClient(LLMProvider):
         if not isinstance(payload, dict):
             return payload
         compact: dict[str, Any] = {}
-        for key in ("segment_id", "segment_type", "speaker_hint", "resolved_speaker_id"):
+        for key in ("segment_id", "order_index", "chunk_id", "segment_type", "speaker_hint", "resolved_speaker_id"):
             if key in payload:
                 compact[key] = payload[key]
         raw_text = payload.get("raw_text")

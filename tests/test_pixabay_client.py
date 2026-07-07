@@ -27,7 +27,7 @@ class _FakeClient:
         return _FakeResponse(404)
 
 
-def test_best_video_url_prefers_highest_quality_variant() -> None:
+def test_preferred_video_url_prefers_medium_variant() -> None:
     asset = {
         "videos": {
             "tiny": {"url": "https://example.com/tiny.mp4", "width": 640, "height": 360, "size": 1000},
@@ -36,4 +36,4 @@ def test_best_video_url_prefers_highest_quality_variant() -> None:
         }
     }
 
-    assert PixabayClient._best_video_url(asset) == "https://example.com/large.mp4"
+    assert PixabayClient._preferred_video_url(asset) == "https://example.com/medium.mp4"

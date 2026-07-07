@@ -16,11 +16,14 @@ class DialogueSegmentationAgent(BaseAgent):
         if self._has_valid_cached_segments(context):
             return
         segments: list[Segment] = []
+        next_order_index = 1
         for chunk in context.state.chunks:
             response = await self.llm.extract_segments(chunk.text)
             for item in response.get("segments", []):
                 item["chunk_id"] = chunk.chunk_id
+                item["order_index"] = next_order_index
                 segments.append(Segment.model_validate(item))
+                next_order_index += 1
         context.state.segments = segments
         self.write_stage_json(
             context,

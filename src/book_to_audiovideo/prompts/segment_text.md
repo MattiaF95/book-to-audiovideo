@@ -1,9 +1,10 @@
-Task: split the chunk into ordered narration/dialogue segments.
+Task: split the chunk into ordered segments with exactly one speaker per segment.
 Return only JSON:
 {
   "segments": [
     {
       "segment_id": "string",
+      "order_index": 1,
       "raw_text": "string",
       "segment_type": "narration or dialogue",
       "speaker_hint": "string or null",
@@ -16,5 +17,13 @@ Return only JSON:
 }
 Rules:
 - Keep wording unchanged.
-- Use the fewest coherent segments possible.
-- speaker_hint is best effort only.
+- Preserve the original reading order.
+- A segment must contain either narration or the words of one speaker, never both.
+- Split every time the speaker changes or narration resumes.
+- Use the fewest coherent segments possible, but never merge different speakers.
+- `speaker_hint` must be:
+  - `narratore` for narration;
+  - the explicit name if the text names the speaker;
+  - otherwise a stable placeholder like `personaggio_1`, `personaggio_2`, reused for the same speaker within the chunk.
+- Do not invent names, backstories, or extra speakers.
+- `order_index` starts at 1 and must match the original order inside the chunk.

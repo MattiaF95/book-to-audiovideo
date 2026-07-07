@@ -78,6 +78,7 @@ def test_segment_enrichment_agent_uses_dedicated_methods(tmp_path: Path) -> None
             Segment(
                 segment_id="seg-1",
                 chunk_id="chunk-1",
+                order_index=1,
                 raw_text="Ciao dal segmento",
                 segment_type=SegmentType.narration,
                 start_offset=0,
@@ -108,6 +109,7 @@ def test_segment_enrichment_agent_rebuilds_invalid_cached_tone_tags(tmp_path: Pa
             Segment(
                 segment_id="seg-1",
                 chunk_id="chunk-1",
+                order_index=1,
                 raw_text="Ciao dal segmento",
                 segment_type=SegmentType.narration,
                 start_offset=0,

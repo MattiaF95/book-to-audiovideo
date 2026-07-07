@@ -48,6 +48,7 @@ class Chunk(BaseModel):
 class Segment(BaseModel):
     segment_id: str
     chunk_id: str
+    order_index: int = 0
     raw_text: str
     segment_type: SegmentType
     speaker_hint: str | None = None

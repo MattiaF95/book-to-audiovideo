@@ -55,7 +55,7 @@ La dashboard permette di:
 Avvio:
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 . .venv/bin/activate
 pip install -e ".[dev]"
 cp .env.example .env

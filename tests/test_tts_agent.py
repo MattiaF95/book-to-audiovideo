@@ -47,7 +47,7 @@ def test_tts_agent_keeps_three_item_history_queue(tmp_path: Path) -> None:
         source_type=".txt",
         artifact_dir=str(tmp_path / "job"),
         segments=[
-            Segment(segment_id=f"seg-{index}", chunk_id="chunk-1", raw_text=f"Testo {index}", segment_type=SegmentType.narration, start_offset=index, end_offset=index + 1, importance_score=0.5)
+            Segment(segment_id=f"seg-{index}", chunk_id="chunk-1", order_index=index + 1, raw_text=f"Testo {index}", segment_type=SegmentType.narration, start_offset=index, end_offset=index + 1, importance_score=0.5)
             for index in range(4)
         ],
         tone_tags=[
@@ -93,6 +93,7 @@ def test_tts_agent_falls_back_to_raw_text_when_tone_tag_is_placeholder(tmp_path:
             Segment(
                 segment_id="seg-1",
                 chunk_id="chunk-1",
+                order_index=1,
                 raw_text="Testo reale",
                 segment_type=SegmentType.narration,
                 start_offset=0,
@@ -133,6 +134,7 @@ def test_tts_agent_raises_clear_error_when_voice_assignment_is_missing(tmp_path:
             Segment(
                 segment_id="seg-1",
                 chunk_id="chunk-1",
+                order_index=1,
                 raw_text="Testo reale",
                 segment_type=SegmentType.dialogue,
                 resolved_speaker_id="hero",

@@ -1,4 +1,4 @@
-Task: assign one consistent voice to each speaker using only provided available voices.
+Task: assign one consistent voice to each canonical speaker using only the provided available voices.
 Return only JSON:
 {
   "assignments": [
@@ -15,4 +15,7 @@ Return only JSON:
 Rules:
 - Select only from available voices.
 - Keep narrator separate from characters.
+- Give the narrator one stable voice for the whole project.
+- Give each character one stable voice for all their segments.
+- Do not create, merge, or rename speakers here.
 - Return short, stable assignments.

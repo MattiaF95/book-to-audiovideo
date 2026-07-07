@@ -59,6 +59,8 @@ class SpeakerResolutionAgent(BaseAgent):
     def _segment_payload(segment: Segment) -> dict[str, object]:
         return {
             "segment_id": segment.segment_id,
+            "order_index": segment.order_index,
+            "chunk_id": segment.chunk_id,
             "segment_type": segment.segment_type.value,
             "speaker_hint": segment.speaker_hint,
             "raw_text": segment.raw_text[:220],
