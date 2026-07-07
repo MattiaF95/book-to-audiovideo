@@ -5,13 +5,14 @@ import anyio
 from book_to_audiovideo.agents.base import BaseAgent
 from book_to_audiovideo.agents.dialogue_segmentation_agent import DialogueSegmentationAgent
 from book_to_audiovideo.agents.manifest_agent import ManifestAgent
+from book_to_audiovideo.agents.media_planning_agent import MediaPlanningAgent
 from book_to_audiovideo.agents.narrative_context_agent import NarrativeContextAgent
+from book_to_audiovideo.agents.pronunciation_planning_agent import PronunciationPlanningAgent
+from book_to_audiovideo.agents.prosody_planning_agent import ProsodyPlanningAgent
 from book_to_audiovideo.agents.speaker_attribution_agent import SpeakerAttributionAgent
 from book_to_audiovideo.agents.speaker_registry_agent import SpeakerRegistryAgent
 from book_to_audiovideo.agents.text_cleanup_agent import TextCleanupAgent
-from book_to_audiovideo.agents.audio_planning_agent import AudioPlanningAgent
-from book_to_audiovideo.agents.story_structure_agent import StoryStructureAgent
-from book_to_audiovideo.agents.text_preparation_agent import TextPreparationAgent
+from book_to_audiovideo.agents.voice_casting_agent import VoiceCastingAgent
 from book_to_audiovideo.config import Settings
 from book_to_audiovideo.models.domain import MediaPlanItem, PronunciationHint, Segment, SegmentType, Speaker, ToneTag, VoiceAssignment
 from book_to_audiovideo.models.state import PipelineState
@@ -19,28 +20,13 @@ from book_to_audiovideo.pipeline.context import PipelineContext
 
 
 class _FakeLLMProvider:
-    def __init__(self, prepare_response: dict | None = None, structure_response: dict | None = None, plan_response: dict | None = None) -> None:
-        self.prepare_response = prepare_response or {}
-        self.structure_response = structure_response or {}
-        self.plan_response = plan_response or {}
+    def __init__(self) -> None:
         self.task_responses: dict[str, dict] = {}
         self.calls: list[tuple[str, dict]] = []
 
     async def run_task(self, prompt_name: str, payload: dict) -> dict:
         self.calls.append((prompt_name, payload))
         return self.task_responses.get(prompt_name, {})
-
-    async def prepare_text(self, payload: dict) -> dict:
-        self.calls.append(("prepare_text", payload))
-        return self.prepare_response
-
-    async def structure_story(self, payload: dict) -> dict:
-        self.calls.append(("structure_story", payload))
-        return self.structure_response
-
-    async def plan_audio(self, payload: dict) -> dict:
-        self.calls.append(("plan_audio", payload))
-        return self.plan_response
 
 
 class _FakeTTSProvider:
@@ -77,104 +63,7 @@ class _NoopAgent(BaseAgent):
         context.state.raw_text = "test"
 
 
-def test_text_preparation_agent_writes_context(tmp_path: Path) -> None:
-    settings = Settings(OUTPUT_DIR=tmp_path, CACHE_DIR=tmp_path / "cache")
-    state = PipelineState(
-        job_id="job-1",
-        book_id="book-1",
-        source_path=str(tmp_path / "source.txt"),
-        source_name="source.txt",
-        source_type=".txt",
-        artifact_dir=str(tmp_path / "job"),
-        raw_text="testo con errore",
-    )
-    context = PipelineContext(settings=settings, state=state)
-    provider = _FakeLLMProvider(
-        prepare_response={
-            "corrected_text": "testo con errore corretto",
-            "corrections": [],
-            "context": {"scene": "tensione", "emotions": ["ansia"], "tone": "drammatico"},
-            "warnings": [],
-        }
-    )
-
-    anyio.run(TextPreparationAgent(provider).execute, context)
-
-    assert provider.calls[0][0] == "prepare_text"
-    assert context.state.cleaned_text == "testo con errore corretto"
-    assert context.state.text_context["scene"] == "tensione"
-
-
-def test_story_structure_agent_keeps_single_speaker_turns(tmp_path: Path) -> None:
-    settings = Settings(OUTPUT_DIR=tmp_path, CACHE_DIR=tmp_path / "cache")
-    state = PipelineState(
-        job_id="job-1",
-        book_id="book-1",
-        source_path=str(tmp_path / "source.txt"),
-        source_name="source.txt",
-        source_type=".txt",
-        artifact_dir=str(tmp_path / "job"),
-        cleaned_text="«Ciao» disse Marco. Poi il narratore continua.",
-        text_context={"scene": "dialogo"},
-    )
-    context = PipelineContext(settings=settings, state=state)
-    provider = _FakeLLMProvider(
-        structure_response={
-            "speakers": [
-                {
-                    "speaker_id": "narrator",
-                    "name": "Narrator",
-                    "role": "narrator",
-                    "gender": "neutral",
-                    "continuity_key": "narrator",
-                    "preferred_voice_constraints": ["clear"],
-                },
-                {
-                    "speaker_id": "marco",
-                    "name": "Marco",
-                    "role": "character",
-                    "gender": "male",
-                    "continuity_key": "marco",
-                    "preferred_voice_constraints": ["warm"],
-                },
-            ],
-            "segments": [
-                {
-                    "segment_id": "seg-1",
-                    "order_index": 1,
-                    "raw_text": "«Ciao» disse Marco.",
-                    "segment_type": "dialogue",
-                    "speaker_hint": "Marco",
-                    "resolved_speaker_id": "marco",
-                    "start_offset": 0,
-                    "end_offset": 20,
-                    "emotion_hint": "calmo",
-                    "importance_score": 0.8,
-                },
-                {
-                    "segment_id": "seg-2",
-                    "order_index": 2,
-                    "raw_text": "Poi il narratore continua.",
-                    "segment_type": "narration",
-                    "speaker_hint": "narratore",
-                    "resolved_speaker_id": "narrator",
-                    "start_offset": 21,
-                    "end_offset": 50,
-                    "emotion_hint": "neutro",
-                    "importance_score": 0.6,
-                },
-            ],
-        }
-    )
-
-    anyio.run(StoryStructureAgent(provider).execute, context)
-
-    assert [speaker.speaker_id for speaker in context.state.speakers] == ["narrator", "marco"]
-    assert [segment.order_index for segment in context.state.segments] == [1, 2]
-    assert all(segment.chunk_id == "book-1" for segment in context.state.segments)
-
-
-def test_audio_planning_agent_assigns_voice_and_media(tmp_path: Path) -> None:
+def test_voice_casting_agent_assigns_stable_voices(tmp_path: Path) -> None:
     settings = Settings(OUTPUT_DIR=tmp_path, CACHE_DIR=tmp_path / "cache")
     state = PipelineState(
         job_id="job-1",
@@ -220,8 +109,9 @@ def test_audio_planning_agent_assigns_voice_and_media(tmp_path: Path) -> None:
         text_context={"scene": "dialogo"},
     )
     context = PipelineContext(settings=settings, state=state)
-    llm = _FakeLLMProvider(
-        plan_response={
+    llm = _FakeLLMProvider()
+    llm.task_responses = {
+        "voice_casting.md": {
             "voice_assignments": [
                 {
                     "speaker_id": "narrator",
@@ -240,26 +130,8 @@ def test_audio_planning_agent_assigns_voice_and_media(tmp_path: Path) -> None:
                     "continuity_anchor": "marco",
                 },
             ],
-            "pronunciation": [
-                {"segment_id": "seg-1", "pronunciation_overrides": {}, "phonetic_hints": {}, "problem_terms": [], "confidence": 0.9}
-            ],
-            "tone_tags": [
-                {"segment_id": "seg-1", "tagged_text": "«Ciao» disse Marco.", "tags_used": [], "tag_confidence": 0.8}
-            ],
-            "media_plan": [
-                {
-                    "segment_id": "seg-1",
-                    "video_keywords": ["room"],
-                    "sfx_keywords": [],
-                    "mood": "calmo",
-                    "scene_type": "interior",
-                    "media_intensity": "low",
-                    "needs_sfx": False,
-                    "sfx_timeline_hint": None,
-                }
-            ],
         }
-    )
+    }
     tts = _FakeTTSProvider(
         [
             {"voice_id": "v-narr", "name": "Narrator Voice", "labels": {"gender": "neutral", "use_case": "narrative_story"}},
@@ -267,12 +139,10 @@ def test_audio_planning_agent_assigns_voice_and_media(tmp_path: Path) -> None:
         ]
     )
 
-    anyio.run(AudioPlanningAgent(llm, tts).execute, context)
+    anyio.run(VoiceCastingAgent(llm, tts).execute, context)
 
     assert [item.speaker_id for item in context.state.voice_assignments] == ["narrator", "marco"]
-    assert context.state.media_plan[0].segment_id == "seg-1"
-    assert context.state.tone_tags[0].segment_id == "seg-1"
-    assert context.state.pronunciation_overrides[0].segment_id == "seg-1"
+    assert [item.continuity_anchor for item in context.state.voice_assignments] == ["narrator", "marco"]
 
 
 def test_each_agent_writes_stage_manifest_and_final_manifest(tmp_path: Path) -> None:
@@ -369,3 +239,76 @@ def test_refactored_narrative_agents_build_stable_segments_and_speakers(tmp_path
     assert context.state.text_context["scene"] == "dialogo"
     assert [segment.resolved_speaker_id for segment in context.state.segments] == ["marco", "narrator"]
     assert [speaker.speaker_id for speaker in context.state.speakers] == ["narrator", "marco"]
+
+
+def test_planning_agents_keep_outputs_small_and_per_segment(tmp_path: Path) -> None:
+    settings = Settings(OUTPUT_DIR=tmp_path, CACHE_DIR=tmp_path / "cache")
+    state = PipelineState(
+        job_id="job-1",
+        book_id="book-1",
+        source_path=str(tmp_path / "source.txt"),
+        source_name="source.txt",
+        source_type=".txt",
+        artifact_dir=str(tmp_path / "job"),
+        text_context={"scene": "dialogo", "tone": "calmo"},
+        speakers=[
+            Speaker(
+                speaker_id="narrator",
+                name="Narrator",
+                role="narrator",
+                gender=None,
+                continuity_key="narrator",
+                preferred_voice_constraints=["clear"],
+            )
+        ],
+        segments=[
+            Segment(
+                segment_id="seg-1",
+                chunk_id="book-1",
+                order_index=1,
+                raw_text="Testo di prova.",
+                segment_type=SegmentType.narration,
+                resolved_speaker_id="narrator",
+                start_offset=0,
+                end_offset=14,
+                emotion_hint="calmo",
+                importance_score=0.5,
+            )
+        ],
+    )
+    context = PipelineContext(settings=settings, state=state)
+    provider = _FakeLLMProvider()
+    provider.task_responses = {
+        "pronunciation_planning.md": {
+            "pronunciation": [
+                {"segment_id": "seg-1", "pronunciation_overrides": {}, "phonetic_hints": {}, "problem_terms": [], "confidence": 0.4}
+            ]
+        },
+        "prosody_planning.md": {
+            "tone_tags": [
+                {"segment_id": "seg-1", "tagged_text": "Testo di prova.", "tags_used": [], "tag_confidence": 0.0}
+            ]
+        },
+        "media_planning.md": {
+            "media_plan": [
+                {
+                    "segment_id": "seg-1",
+                    "video_keywords": ["room"],
+                    "sfx_keywords": [],
+                    "mood": "calmo",
+                    "scene_type": "interior",
+                    "media_intensity": "low",
+                    "needs_sfx": False,
+                    "sfx_timeline_hint": None,
+                }
+            ]
+        },
+    }
+
+    anyio.run(PronunciationPlanningAgent(provider).execute, context)
+    anyio.run(ProsodyPlanningAgent(provider).execute, context)
+    anyio.run(MediaPlanningAgent(provider).execute, context)
+
+    assert context.state.pronunciation_overrides[0].segment_id == "seg-1"
+    assert context.state.tone_tags[0].segment_id == "seg-1"
+    assert context.state.media_plan[0].segment_id == "seg-1"

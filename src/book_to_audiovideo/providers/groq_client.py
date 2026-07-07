@@ -33,9 +33,6 @@ class GroqClient(LLMProvider):
         self.base_url = "https://api.groq.com/openai/v1/chat/completions"
         self.model_fallbacks = [settings.default_llm_model]
         self.task_token_budgets = {
-            "text_preparation.md": settings.groq_cleanup_token_budget,
-            "story_structure.md": settings.groq_segment_token_budget,
-            "audio_planning.md": settings.groq_media_token_budget,
             "text_cleanup.md": settings.groq_cleanup_token_budget,
             "narrative_context.md": settings.groq_enrichment_token_budget,
             "dialogue_segmentation.md": settings.groq_segment_token_budget,
@@ -61,9 +58,6 @@ class GroqClient(LLMProvider):
         prompt_budget = self._budget_for(prompt_name)
         estimated_tokens = self._estimate_tokens(prompt_text) + self._estimate_tokens(payload_text)
         if prompt_name in {
-            "text_preparation.md",
-            "story_structure.md",
-            "audio_planning.md",
             "text_cleanup.md",
             "narrative_context.md",
             "dialogue_segmentation.md",
@@ -96,17 +90,10 @@ class GroqClient(LLMProvider):
             return max(0.0, (retry_at - datetime.now(timezone.utc)).total_seconds())
 
     def _compact_payload(self, prompt_name: str, payload: dict[str, Any]) -> dict[str, Any]:
-        if prompt_name == "text_preparation.md":
-            return {"text": payload.get("text", "")}
         if prompt_name == "text_cleanup.md":
             return {"text": payload.get("text", "")}
         if prompt_name == "narrative_context.md":
             return {"corrected_text": payload.get("corrected_text", "")}
-        if prompt_name == "story_structure.md":
-            return {
-                "corrected_text": payload.get("corrected_text", ""),
-                "context": payload.get("context", {}),
-            }
         if prompt_name == "dialogue_segmentation.md":
             return {
                 "corrected_text": payload.get("corrected_text", ""),
@@ -129,14 +116,6 @@ class GroqClient(LLMProvider):
                 "context": payload.get("context", {}),
                 "speakers": [self._compact_speaker(item) for item in payload.get("speakers", [])],
                 "segments": [self._compact_segment(item) for item in payload.get("segments", [])],
-            }
-        if prompt_name == "audio_planning.md":
-            return {
-                "corrected_text": payload.get("corrected_text", ""),
-                "context": payload.get("context", {}),
-                "speakers": [self._compact_speaker(item) for item in payload.get("speakers", [])],
-                "segments": [self._compact_segment(item) for item in payload.get("segments", [])],
-                "available_voices": [self._compact_voice(item) for item in payload.get("available_voices", [])],
             }
         if prompt_name == "voice_casting.md":
             return {
@@ -283,9 +262,6 @@ class GroqClient(LLMProvider):
         estimated_tokens = self._estimate_tokens(prompt) + self._estimate_tokens(payload_text)
         if estimated_tokens > prompt_budget:
             if prompt_name in {
-                "text_preparation.md",
-                "story_structure.md",
-                "audio_planning.md",
                 "text_cleanup.md",
                 "narrative_context.md",
                 "dialogue_segmentation.md",
@@ -365,12 +341,3 @@ class GroqClient(LLMProvider):
 
     async def run_task(self, prompt_name: str, payload: dict[str, Any]) -> dict[str, Any]:
         return await self._structured_generate(prompt_name, payload)
-
-    async def prepare_text(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return await self._structured_generate("text_preparation.md", payload)
-
-    async def structure_story(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return await self._structured_generate("story_structure.md", payload)
-
-    async def plan_audio(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return await self._structured_generate("audio_planning.md", payload)

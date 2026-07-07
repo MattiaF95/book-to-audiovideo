@@ -4,7 +4,7 @@ Pipeline locale MVP-first per trasformare un libro in un video narrato usando so
 
 | Area | Scelta | Ruolo |
 |---|---|---|
-| 🧠 LLM | `openai/gpt-oss-20b` via Groq | Pulizia testo, analisi contesto/emozioni, segmentazione speaker-aware, voice planning e media planning |
+| 🧠 LLM | `openai/gpt-oss-20b` via Groq | Cleanup testo, analisi narrativa, casting voci, pronuncia, prosodia e media planning in pass separati |
 | 🔊 TTS | ElevenLabs | Sintesi vocale per i segmenti narrati e dialogati |
 | 🎬 Media | Pixabay | Video di sfondo |
 | 🎞️ Compositing | FFmpeg | Mix audio, loop video, export finale |
@@ -16,15 +16,39 @@ Pipeline locale MVP-first per trasformare un libro in un video narrato usando so
 | # | Fase | Agente | Usa LLM | Provider / modello | Ruolo | Solo chiamate? |
 |---|---|---|---|---|---|---|
 | 1 | 📥 Ingestion | `IngestionAgent` | No | Nessuno | Carica il file sorgente grezzo senza manipolarlo | No, solo lettura file |
-| 2 | ✨ Text prep | `TextPreparationAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Corregge refusi, mantiene lo stile e deduce contesto/emozioni | No, usa LLM |
-| 3 | 🗣️ Story structure | `StoryStructureAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Identifica narratore, personaggi, dialoghi e ordine dei segmenti | No, usa LLM |
-| 4 | 🎭 Audio planning | `AudioPlanningAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` + ElevenLabs metadata | Sceglie voci, tono, pronuncia e media hints per ogni segmento | No, usa LLM + metadata provider |
-| 5 | 🎙️ TTS | `TTSAgent` | Sì | ElevenLabs API | Genera i file audio finali dei segmenti | Sì, fa solo chiamate al provider LLM-TTS |
-| 6 | 🎥 Media | `MediaFetchAgent` | No | Pixabay API | Cerca e scarica il video di sfondo per i segmenti pianificati | Sì, fa solo chiamate a un provider non-LLM |
-| 7 | 🎚️ Mix | `AudioMixAgent` | No | FFmpeg locale | Miscela voce e SFX/track secondarie | No, usa FFmpeg locale |
-| 8 | 🎬 Video | `VideoComposeAgent` | No | FFmpeg locale | Unisce audio finale e video Pixabay | No, usa FFmpeg locale |
-| 9 | 🧪 QA | `QAAgent` | No | FFmpeg locale | Controlla durata, loudness e coerenza tecnica | No, analisi locale |
-| 10 | 📦 Manifest | `ManifestAgent` | No | Nessuno | Scrive il riepilogo finale del job | No, serializzazione locale |
+| 2 | ✨ Text cleanup | `TextCleanupAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Corregge solo errori evidenti, preservando stile e significato | No, usa LLM |
+| 3 | 🧭 Narrative context | `NarrativeContextAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Estrae solo il contesto globale minimo utile ai passaggi successivi | No, usa LLM |
+| 4 | ✂️ Dialogue segmentation | `DialogueSegmentationAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Divide il testo in segmenti ordinati di narrazione o dialogo | No, usa LLM |
+| 5 | 👥 Speaker registry | `SpeakerRegistryAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Costruisce il registro stabile di narratore e personaggi ricorrenti | No, usa LLM |
+| 6 | 🗣️ Speaker attribution | `SpeakerAttributionAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Assegna ogni segmento a un solo speaker riusando gli speaker_id stabili | No, usa LLM |
+| 7 | 🏷️ Narrative annotation | `NarrativeAnnotationAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Aggiunge solo annotazioni leggere per segmento | No, usa LLM |
+| 8 | 🎙️ Voice casting | `VoiceCastingAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` + ElevenLabs metadata | Sceglie una voce stabile per narratore e personaggi ricorrenti | No, usa LLM + metadata provider |
+| 9 | 🔤 Pronunciation planning | `PronunciationPlanningAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Produce solo hints di pronuncia davvero necessari | No, usa LLM |
+| 10 | 🎚️ Prosody planning | `ProsodyPlanningAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Definisce solo tone tags minimi utili al TTS | No, usa LLM |
+| 11 | 🎞️ Media planning | `MediaPlanningAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Prepara solo query e piano media di sfondo per segmento | No, usa LLM |
+| 12 | 🎥 Media fetch | `MediaFetchAgent` | No | Pixabay API | Cerca e scarica il video di sfondo | Sì, fa solo chiamate a un provider non-LLM |
+| 13 | 🔊 TTS | `TTSAgent` | Sì | ElevenLabs API | Genera l'audio finale riusando speaker reference e continuity anchor | Sì, fa solo chiamate al provider TTS |
+| 14 | 🎚️ Mix | `AudioMixAgent` | No | FFmpeg locale | Miscela voce e SFX/track secondarie | No, usa FFmpeg locale |
+| 15 | 🎬 Video | `VideoComposeAgent` | No | FFmpeg locale | Unisce audio finale e video Pixabay | No, usa FFmpeg locale |
+| 16 | 🧪 QA | `QAAgent` | No | FFmpeg locale | Controlla durata, loudness e coerenza tecnica | No, analisi locale |
+| 17 | 📦 Manifest | `ManifestAgent` | No | Nessuno | Scrive il riepilogo finale del job | No, serializzazione locale |
+
+### Prompt attivi
+
+Ogni agente LLM del flusso attivo ha un prompt dedicato in `src/book_to_audiovideo/prompts/`:
+
+| Agente | Prompt |
+|---|---|
+| `TextCleanupAgent` | `text_cleanup.md` |
+| `NarrativeContextAgent` | `narrative_context.md` |
+| `DialogueSegmentationAgent` | `dialogue_segmentation.md` |
+| `SpeakerRegistryAgent` | `speaker_registry.md` |
+| `SpeakerAttributionAgent` | `speaker_attribution.md` |
+| `NarrativeAnnotationAgent` | `narrative_annotation.md` |
+| `VoiceCastingAgent` | `voice_casting.md` |
+| `PronunciationPlanningAgent` | `pronunciation_planning.md` |
+| `ProsodyPlanningAgent` | `prosody_planning.md` |
+| `MediaPlanningAgent` | `media_planning.md` |
 
 ---
 
@@ -96,15 +120,22 @@ python -m book_to_audiovideo.main run path/al/libro.txt
 | # | Stage |
 |---|---|
 | 1 | `ingestion` |
-| 2 | `text_preparation` |
-| 3 | `story_structure` |
-| 4 | `audio_planning` |
-| 5 | `tts` |
-| 6 | `media_fetch` |
-| 7 | `audio_mix` |
-| 8 | `video_compose` |
-| 9 | `qa` |
-| 10 | `manifest` |
+| 2 | `text_cleanup` |
+| 3 | `narrative_context` |
+| 4 | `dialogue_segmentation` |
+| 5 | `speaker_registry` |
+| 6 | `speaker_attribution` |
+| 7 | `narrative_annotation` |
+| 8 | `voice_casting` |
+| 9 | `pronunciation_planning` |
+| 10 | `prosody_planning` |
+| 11 | `media_planning` |
+| 12 | `media_fetch` |
+| 13 | `tts` |
+| 14 | `audio_mix` |
+| 15 | `video_compose` |
+| 16 | `qa` |
+| 17 | `manifest` |
 
 ---
 
@@ -132,7 +163,9 @@ Ogni job crea `data/output/<job_id>/` con:
 - Il video di sfondo è unico; se più corto viene loopato da FFmpeg.
 - Groq usa l'endpoint OpenAI-compatible Chat Completions e forza output JSON con `response_format`.
 - Le chiamate Groq sono serializzate con un rate limiter globale `LLM_MIN_INTERVAL_SECONDS` tra richieste consecutive.
-- Text prep, story structure e audio planning sono stati separati in pass LLM dedicati per ridurre gli errori di coreference senza usare chunking codice.
+- Il flusso LLM è stato separato in pass piccoli a compito singolo per ridurre errori di validazione JSON e coreference.
+- Il narratore è uno speaker unico e stabile in tutto il progetto.
+- Ogni speaker ricorrente mantiene uno `speaker_id` stabile e una `continuity_anchor` riusabile nei segmenti successivi verso ElevenLabs.
 - ElevenLabs request stitching è usato solo con modelli compatibili; non viene usato con `eleven_v3`.
 - Nei modelli che supportano stitching, gli ID di contesto vengono mantenuti in una coda fissa di massimo 3 elementi.
 - Il QA finale non blocca il job: scrive `warning` se loudness o durata non sono nei valori attesi. ⚠️

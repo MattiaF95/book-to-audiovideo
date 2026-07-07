@@ -48,7 +48,7 @@ class _FakeClient:
 def test_groq_client_returns_structured_json(monkeypatch, tmp_path: Path) -> None:
     prompts_dir = tmp_path / "prompts"
     prompts_dir.mkdir()
-    (prompts_dir / "text_preparation.md").write_text("prompt", encoding="utf-8")
+    (prompts_dir / "text_cleanup.md").write_text("prompt", encoding="utf-8")
     settings = Settings(
         GROQ_API_KEY="test-key",
         DEFAULT_LLM_MODEL="openai/gpt-oss-20b",
@@ -62,5 +62,5 @@ def test_groq_client_returns_structured_json(monkeypatch, tmp_path: Path) -> Non
         lambda timeout: _FakeClient({}),
     )
 
-    result = anyio.run(client.prepare_text, {"text": "ciao"})
+    result = anyio.run(client.run_task, "text_cleanup.md", {"text": "ciao"})
     assert result["corrected_text"] == "ok"
