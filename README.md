@@ -13,21 +13,21 @@ Pipeline locale MVP-first per trasformare un libro in un video narrato usando so
 
 ## 🤖 Pipeline / AI Agent
 
-| # | Fase | Agente | Descrizione breve |
-|---|---|---|---|
-| 1 | 📥 Ingestion | `IngestionAgent` | Carica il testo sorgente |
-| 2 | ✨ Cleanup | `CleanupAgent` | Pulisce il testo grezzo |
-| 3 | 🔪 Chunking | `ChunkingAgent` | Divide in parti gestibili |
-| 4 | 🗣️ Dialogue | `DialogueSegmentationAgent` | Separa dialoghi e narrazione |
-| 5 | 👥 Speaker | `SpeakerResolutionAgent` | Identifica i parlanti |
-| 6 | 🎭 Voice | `VoiceAssignmentAgent` | Assegna voci coerenti |
-| 7 | 🧩 Enrichment | `SegmentEnrichmentAgent` | Aggiunge tono e media hints |
-| 8 | 🎥 Media | `MediaFetchAgent` | Recupera il video di sfondo |
-| 9 | 🎙️ TTS | `TTSAgent` | Genera voce sintetica |
-| 10 | 🎚️ Mix | `AudioMixAgent` | Miscela audio finale |
-| 11 | 🎬 Video | `VideoComposeAgent` | Unisce audio e video |
-| 12 | 🧪 QA | `QAAgent` | Controlla durata e loudness |
-| 13 | 📦 Manifest | `ManifestAgent` | Scrive il riepilogo |
+| # | Fase | Agente | Usa LLM | Provider / modello | Ruolo | Solo chiamate? |
+|---|---|---|---|---|---|---|
+| 1 | 📥 Ingestion | `IngestionAgent` | No | Nessuno | Carica il file sorgente e normalizza l'ingresso | No, logica locale |
+| 2 | ✨ Cleanup | `CleanupAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Pulisce il testo grezzo in modo conservativo | No, usa LLM + merge locale |
+| 3 | 🔪 Chunking | `ChunkingAgent` | No | Nessuno | Divide il testo in chunk gestibili | No, logica locale |
+| 4 | 🗣️ Dialogue | `DialogueSegmentationAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Divide ogni chunk in segmenti narratore/personaggio con ordine esplicito | No, usa LLM + validazione locale |
+| 5 | 👥 Speaker | `SpeakerResolutionAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Riconcilia i personaggi e assegna speaker stabili | No, usa LLM + normalizzazione locale |
+| 6 | 🎭 Voice | `VoiceAssignmentAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` + ElevenLabs API | Assegna una voce coerente a ogni speaker e risolve la voce finale TTS | No, usa LLM + chiamate provider |
+| 7 | 🧩 Enrichment | `SegmentEnrichmentAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Estrae pronuncia, tono e piano media per ogni segmento | No, usa LLM + validazione locale |
+| 8 | 🎥 Media | `MediaFetchAgent` | No | Pixabay API | Cerca e scarica il video di sfondo per i segmenti pianificati | Sì, fa solo chiamate a un provider non-LLM |
+| 9 | 🎙️ TTS | `TTSAgent` | Sì | ElevenLabs API | Genera i file audio dei segmenti con il modello TTS del provider | Sì, fa solo chiamate a un provider LLM-TTS |
+| 10 | 🎚️ Mix | `AudioMixAgent` | No | FFmpeg locale | Miscela voce e SFX/track secondarie | No, usa FFmpeg locale |
+| 11 | 🎬 Video | `VideoComposeAgent` | No | FFmpeg locale | Unisce audio finale e video Pixabay | No, usa FFmpeg locale |
+| 12 | 🧪 QA | `QAAgent` | No | FFmpeg locale | Controlla durata, loudness e coerenza tecnica | No, analisi locale |
+| 13 | 📦 Manifest | `ManifestAgent` | No | Nessuno | Scrive il riepilogo finale del job | No, serializzazione locale |
 
 ---
 
@@ -150,7 +150,7 @@ Ogni job crea `data/output/<job_id>/` con:
 | Limite | Dettaglio |
 |---|---|
 | Test | Offline e mock, non API reali |
-| Pixabay | Solo ricerca video; il risultato viene scaricato nella variante di qualità più alta disponibile |
+| Pixabay | Solo ricerca video; il risultato viene scaricato nella variante `medium` quando disponibile |
 | Voce | La scelta dipende dalle voci del tuo account |
 | Dashboard | Solo upload, monitoraggio, approve/reject e apertura output finale |
 
