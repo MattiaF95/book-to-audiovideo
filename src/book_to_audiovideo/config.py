@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     cache_dir: Path = Field(default=Path("data/cache"), alias="CACHE_DIR")
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
     default_tts_model: str = Field(default="eleven_v3", alias="DEFAULT_TTS_MODEL")
-    default_llm_model: str = Field(default="llama-3.1-8b-instant", alias="DEFAULT_LLM_MODEL")
+    default_llm_model: str = Field(default="llama-3.3-70b-versatile", alias="DEFAULT_LLM_MODEL")
     ffmpeg_bin: str = Field(default="ffmpeg", alias="FFMPEG_BIN")
     ffprobe_bin: str = Field(default="ffprobe", alias="FFPROBE_BIN")
     approval_timeout_seconds: int = Field(default=0, alias="APPROVAL_TIMEOUT_SECONDS")

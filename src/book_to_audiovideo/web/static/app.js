@@ -13,19 +13,23 @@ let selectedJobId = new URLSearchParams(window.location.search).get("job");
 let uploadInFlight = false;
 
 const stages = [
-  "ingestion", "cleanup", "chunking", "dialogue_segmentation", "speaker_resolution",
-  "voice_assignment", "segment_enrichment", "media_fetch",
-  "tts", "audio_mix", "video_compose", "qa", "manifest"
+  "ingestion",
+  "text_preparation",
+  "story_structure",
+  "audio_planning",
+  "media_fetch",
+  "tts",
+  "audio_mix",
+  "video_compose",
+  "qa",
+  "manifest"
 ];
 
 const stageDescriptions = {
-  ingestion: "Legge il file sorgente e normalizza il testo di base.",
-  cleanup: "Corregge il testo in modo conservativo senza riscriverlo.",
-  chunking: "Divide il libro in blocchi lavorabili per audio e analisi.",
-  dialogue_segmentation: "Separa narrazione e dialoghi.",
-  speaker_resolution: "Stabilizza i personaggi e assegna chi parla.",
-  voice_assignment: "Sceglie le voci ElevenLabs coerenti per narratore e personaggi.",
-  segment_enrichment: "In un solo pass decide pronuncia, tono e piano media.",
+  ingestion: "Legge il file sorgente senza modificarne il contenuto.",
+  text_preparation: "Corregge refusi, interpreta il contesto e rileva il tono della scena.",
+  story_structure: "Individua narratore e personaggi, separa narrazione e dialoghi e assegna i segmenti.",
+  audio_planning: "Sceglie le voci e prepara le query finali per ElevenLabs.",
   media_fetch: "Cerca il video di sfondo.",
   tts: "Genera l'audio parlato per ogni segmento.",
   audio_mix: "Mixa voce ed effetti con voce dominante.",

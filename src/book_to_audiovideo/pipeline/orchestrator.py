@@ -8,18 +8,15 @@ from pathlib import Path
 from uuid import uuid4
 
 from book_to_audiovideo.agents.audio_mix_agent import AudioMixAgent
-from book_to_audiovideo.agents.chunking_agent import ChunkingAgent
-from book_to_audiovideo.agents.cleanup_agent import CleanupAgent
-from book_to_audiovideo.agents.dialogue_segmentation_agent import DialogueSegmentationAgent
+from book_to_audiovideo.agents.audio_planning_agent import AudioPlanningAgent
 from book_to_audiovideo.agents.ingestion_agent import IngestionAgent
 from book_to_audiovideo.agents.manifest_agent import ManifestAgent
 from book_to_audiovideo.agents.media_fetch_agent import MediaFetchAgent
 from book_to_audiovideo.agents.qa_agent import QAAgent
-from book_to_audiovideo.agents.segment_enrichment_agent import SegmentEnrichmentAgent
-from book_to_audiovideo.agents.speaker_resolution_agent import SpeakerResolutionAgent
+from book_to_audiovideo.agents.story_structure_agent import StoryStructureAgent
+from book_to_audiovideo.agents.text_preparation_agent import TextPreparationAgent
 from book_to_audiovideo.agents.tts_agent import TTSAgent
 from book_to_audiovideo.agents.video_compose_agent import VideoComposeAgent
-from book_to_audiovideo.agents.voice_assignment_agent import VoiceAssignmentAgent
 from book_to_audiovideo.config import Settings
 from book_to_audiovideo.models.domain import AttentionRequest, JobEvent, JobStatus
 from book_to_audiovideo.models.state import PipelineState
@@ -32,7 +29,6 @@ from book_to_audiovideo.services.duration_service import DurationService
 from book_to_audiovideo.services.ffmpeg_service import FFmpegService
 from book_to_audiovideo.services.file_service import FileService
 from book_to_audiovideo.services.media_service import MediaService
-from book_to_audiovideo.services.text_service import TextService
 from book_to_audiovideo.utils.json_utils import read_json, write_json
 
 LOGGER = logging.getLogger(__name__)
@@ -80,7 +76,6 @@ class PipelineOrchestrator:
         self.job_store = JobStore(settings)
         prompts_dir = Path(__file__).resolve().parents[1] / "prompts"
         self.file_service = FileService()
-        self.text_service = TextService()
         self.duration_service = DurationService(settings)
         self.ffmpeg_service = FFmpegService(settings)
         self.media_service = MediaService()
@@ -91,13 +86,10 @@ class PipelineOrchestrator:
 
     def _build_agents(self) -> list[object]:
         return [
-            IngestionAgent(self.file_service, self.text_service),
-            CleanupAgent(self.llm, self.text_service),
-            ChunkingAgent(self.text_service),
-            DialogueSegmentationAgent(self.llm),
-            SpeakerResolutionAgent(self.llm),
-            VoiceAssignmentAgent(self.llm, self.tts),
-            SegmentEnrichmentAgent(self.llm),
+            IngestionAgent(self.file_service),
+            TextPreparationAgent(self.llm),
+            StoryStructureAgent(self.llm),
+            AudioPlanningAgent(self.llm, self.tts),
             MediaFetchAgent(self.media, self.media_service),
             TTSAgent(self.tts, self.duration_service),
             AudioMixAgent(self.ffmpeg_service),

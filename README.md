@@ -4,7 +4,7 @@ Pipeline locale MVP-first per trasformare un libro in un video narrato usando so
 
 | Area | Scelta | Ruolo |
 |---|---|---|
-| 🧠 LLM | `llama-3.1-8b-instant` via Groq | Analisi testo, pulizia conservativa, segmentazione, speaker resolution, media planning |
+| 🧠 LLM | `llama-3.3-70b-versatile` via Groq | Pulizia testo, analisi contesto/emozioni, segmentazione speaker-aware, voice planning e media planning |
 | 🔊 TTS | ElevenLabs | Sintesi vocale per i segmenti narrati e dialogati |
 | 🎬 Media | Pixabay | Video di sfondo |
 | 🎞️ Compositing | FFmpeg | Mix audio, loop video, export finale |
@@ -15,19 +15,16 @@ Pipeline locale MVP-first per trasformare un libro in un video narrato usando so
 
 | # | Fase | Agente | Usa LLM | Provider / modello | Ruolo | Solo chiamate? |
 |---|---|---|---|---|---|---|
-| 1 | 📥 Ingestion | `IngestionAgent` | No | Nessuno | Carica il file sorgente e normalizza l'ingresso | No, logica locale |
-| 2 | ✨ Cleanup | `CleanupAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Pulisce il testo grezzo in modo conservativo | No, usa LLM + merge locale |
-| 3 | 🔪 Chunking | `ChunkingAgent` | No | Nessuno | Divide il testo in chunk gestibili | No, logica locale |
-| 4 | 🗣️ Dialogue | `DialogueSegmentationAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Divide ogni chunk in segmenti narratore/personaggio con ordine esplicito | No, usa LLM + validazione locale |
-| 5 | 👥 Speaker | `SpeakerResolutionAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Riconcilia i personaggi e assegna speaker stabili | No, usa LLM + normalizzazione locale |
-| 6 | 🎭 Voice | `VoiceAssignmentAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` + ElevenLabs API | Assegna una voce coerente a ogni speaker e risolve la voce finale TTS | No, usa LLM + chiamate provider |
-| 7 | 🧩 Enrichment | `SegmentEnrichmentAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Estrae pronuncia, tono e piano media per ogni segmento | No, usa LLM + validazione locale |
-| 8 | 🎥 Media | `MediaFetchAgent` | No | Pixabay API | Cerca e scarica il video di sfondo per i segmenti pianificati | Sì, fa solo chiamate a un provider non-LLM |
-| 9 | 🎙️ TTS | `TTSAgent` | Sì | ElevenLabs API | Genera i file audio dei segmenti con il modello TTS del provider | Sì, fa solo chiamate a un provider LLM-TTS |
-| 10 | 🎚️ Mix | `AudioMixAgent` | No | FFmpeg locale | Miscela voce e SFX/track secondarie | No, usa FFmpeg locale |
-| 11 | 🎬 Video | `VideoComposeAgent` | No | FFmpeg locale | Unisce audio finale e video Pixabay | No, usa FFmpeg locale |
-| 12 | 🧪 QA | `QAAgent` | No | FFmpeg locale | Controlla durata, loudness e coerenza tecnica | No, analisi locale |
-| 13 | 📦 Manifest | `ManifestAgent` | No | Nessuno | Scrive il riepilogo finale del job | No, serializzazione locale |
+| 1 | 📥 Ingestion | `IngestionAgent` | No | Nessuno | Carica il file sorgente grezzo senza manipolarlo | No, solo lettura file |
+| 2 | ✨ Text prep | `TextPreparationAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Corregge refusi, mantiene lo stile e deduce contesto/emozioni | No, usa LLM |
+| 3 | 🗣️ Story structure | `StoryStructureAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` | Identifica narratore, personaggi, dialoghi e ordine dei segmenti | No, usa LLM |
+| 4 | 🎭 Audio planning | `AudioPlanningAgent` | Sì | Groq, `DEFAULT_LLM_MODEL` + ElevenLabs metadata | Sceglie voci, tono, pronuncia e media hints per ogni segmento | No, usa LLM + metadata provider |
+| 5 | 🎙️ TTS | `TTSAgent` | Sì | ElevenLabs API | Genera i file audio finali dei segmenti | Sì, fa solo chiamate al provider LLM-TTS |
+| 6 | 🎥 Media | `MediaFetchAgent` | No | Pixabay API | Cerca e scarica il video di sfondo per i segmenti pianificati | Sì, fa solo chiamate a un provider non-LLM |
+| 7 | 🎚️ Mix | `AudioMixAgent` | No | FFmpeg locale | Miscela voce e SFX/track secondarie | No, usa FFmpeg locale |
+| 8 | 🎬 Video | `VideoComposeAgent` | No | FFmpeg locale | Unisce audio finale e video Pixabay | No, usa FFmpeg locale |
+| 9 | 🧪 QA | `QAAgent` | No | FFmpeg locale | Controlla durata, loudness e coerenza tecnica | No, analisi locale |
+| 10 | 📦 Manifest | `ManifestAgent` | No | Nessuno | Scrive il riepilogo finale del job | No, serializzazione locale |
 
 ---
 
@@ -37,7 +34,7 @@ Pipeline locale MVP-first per trasformare un libro in un video narrato usando so
 |---|---|
 | `src/book_to_audiovideo/agents/` | Agent piccoli con compiti separati |
 | `src/book_to_audiovideo/providers/` | Adapter live Groq, ElevenLabs, Pixabay |
-| `src/book_to_audiovideo/services/` | Parsing file, chunking, FFmpeg, durata, query media |
+| `src/book_to_audiovideo/services/` | Parsing file, FFmpeg, durata, query media |
 | `src/book_to_audiovideo/pipeline/orchestrator.py` | Stato job, persistenza, resume e pause manuali |
 | `src/book_to_audiovideo/web/` | Dashboard locale FastAPI + template/static frontend |
 
@@ -99,18 +96,15 @@ python -m book_to_audiovideo.main run path/al/libro.txt
 | # | Stage |
 |---|---|
 | 1 | `ingestion` |
-| 2 | `cleanup` |
-| 3 | `chunking` |
-| 4 | `dialogue_segmentation` |
-| 5 | `speaker_resolution` |
-| 6 | `voice_assignment` |
-| 7 | `segment_enrichment` |
-| 8 | `media_fetch` |
-| 9 | `tts` |
-| 10 | `audio_mix` |
-| 11 | `video_compose` |
-| 12 | `qa` |
-| 13 | `manifest` |
+| 2 | `text_preparation` |
+| 3 | `story_structure` |
+| 4 | `audio_planning` |
+| 5 | `tts` |
+| 6 | `media_fetch` |
+| 7 | `audio_mix` |
+| 8 | `video_compose` |
+| 9 | `qa` |
+| 10 | `manifest` |
 
 ---
 
@@ -138,7 +132,7 @@ Ogni job crea `data/output/<job_id>/` con:
 - Il video di sfondo è unico; se più corto viene loopato da FFmpeg.
 - Groq usa l'endpoint OpenAI-compatible Chat Completions e forza output JSON con `response_format`.
 - Le chiamate Groq sono serializzate con un rate limiter globale `LLM_MIN_INTERVAL_SECONDS` tra richieste consecutive.
-- Pronunciation, tone tagging e media planning sono stati accorpati in un solo pass LLM per ridurre il rischio di `429`.
+- Text prep, story structure e audio planning sono stati separati in pass LLM dedicati per ridurre gli errori di coreference senza usare chunking codice.
 - ElevenLabs request stitching è usato solo con modelli compatibili; non viene usato con `eleven_v3`.
 - Nei modelli che supportano stitching, gli ID di contesto vengono mantenuti in una coda fissa di massimo 3 elementi.
 - Il QA finale non blocca il job: scrive `warning` se loudness o durata non sono nei valori attesi. ⚠️

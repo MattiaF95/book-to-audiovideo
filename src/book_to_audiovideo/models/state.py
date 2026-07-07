@@ -7,8 +7,6 @@ from pydantic import BaseModel, Field
 
 from book_to_audiovideo.models.domain import (
     AttentionRequest,
-    Chunk,
-    CleanupChange,
     JobEvent,
     JobStatus,
     MediaAsset,
@@ -45,9 +43,9 @@ class PipelineState(BaseModel):
     current_stage: str = "queued"
     raw_text: str = ""
     cleaned_text: str = ""
-    cleanup_diff: list[CleanupChange] = Field(default_factory=list)
-    cleanup_warnings: list[str] = Field(default_factory=list)
-    chunks: list[Chunk] = Field(default_factory=list)
+    text_context: dict[str, object] = Field(default_factory=dict)
+    text_corrections: list[dict[str, object]] = Field(default_factory=list)
+    text_warnings: list[str] = Field(default_factory=list)
     segments: list[Segment] = Field(default_factory=list)
     speakers: list[Speaker] = Field(default_factory=list)
     voice_assignments: list[VoiceAssignment] = Field(default_factory=list)

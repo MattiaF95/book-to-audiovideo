@@ -33,15 +33,11 @@ class GroqClient(LLMProvider):
         self.base_url = "https://api.groq.com/openai/v1/chat/completions"
         self.model_fallbacks = [settings.default_llm_model]
         self.task_token_budgets = {
-            "cleanup_text.md": settings.groq_cleanup_token_budget,
-            "segment_text.md": settings.groq_segment_token_budget,
-            "resolve_speaker.md": settings.groq_speaker_token_budget,
-            "assign_voice.md": settings.groq_voice_token_budget,
-            "summary_rules.md": settings.groq_enrichment_token_budget,
-            "pronunciation_hints.md": settings.groq_pronunciation_token_budget,
-            "tone_tags.md": settings.groq_tone_token_budget,
-            "plan_media.md": settings.groq_media_token_budget,
+            "text_preparation.md": max(settings.groq_cleanup_token_budget, 12000),
+            "story_structure.md": max(settings.groq_segment_token_budget, 16000),
+            "audio_planning.md": max(settings.groq_media_token_budget, 12000),
         }
+
     def _load_prompt(self, name: str) -> str:
         return (self.prompts_dir / name).read_text(encoding="utf-8")
 
@@ -54,6 +50,8 @@ class GroqClient(LLMProvider):
     def _request_reservation(self, prompt_name: str, prompt_text: str, payload_text: str) -> int:
         prompt_budget = self._budget_for(prompt_name)
         estimated_tokens = self._estimate_tokens(prompt_text) + self._estimate_tokens(payload_text)
+        if prompt_name in {"text_preparation.md", "story_structure.md", "audio_planning.md"}:
+            return max(estimated_tokens + 200, prompt_budget)
         return min(prompt_budget, max(estimated_tokens + 200, 300))
 
     def _retry_after_seconds(self, response: httpx.Response) -> float | None:
@@ -72,31 +70,28 @@ class GroqClient(LLMProvider):
             return max(0.0, (retry_at - datetime.now(timezone.utc)).total_seconds())
 
     def _compact_payload(self, prompt_name: str, payload: dict[str, Any]) -> dict[str, Any]:
-        if prompt_name == "resolve_speaker.md":
+        if prompt_name == "text_preparation.md":
+            return {"text": payload.get("text", "")}
+        if prompt_name == "story_structure.md":
             return {
-                "segments": [self._compact_segment(item) for item in payload.get("segments", [])],
-                "existing_speakers": [self._compact_speaker(item) for item in payload.get("existing_speakers", [])],
+                "corrected_text": payload.get("corrected_text", ""),
+                "context": payload.get("context", {}),
             }
-        if prompt_name == "assign_voice.md":
+        if prompt_name == "audio_planning.md":
             return {
+                "corrected_text": payload.get("corrected_text", ""),
+                "context": payload.get("context", {}),
                 "speakers": [self._compact_speaker(item) for item in payload.get("speakers", [])],
+                "segments": [self._compact_segment(item) for item in payload.get("segments", [])],
                 "available_voices": [self._compact_voice(item) for item in payload.get("available_voices", [])],
             }
-        if prompt_name in {"summary_rules.md", "pronunciation_hints.md", "tone_tags.md", "plan_media.md"}:
-            segment = payload.get("segment")
-            compact = {"mode": payload.get("mode")}
-            if isinstance(segment, dict):
-                compact["segment"] = self._compact_segment(segment)
-            else:
-                compact["segment"] = segment
-            return compact
         return self._truncate_value(payload, max_chars=self._budget_for(prompt_name) * 4)
 
     def _compact_segment(self, payload: Any) -> Any:
         if not isinstance(payload, dict):
             return payload
         compact: dict[str, Any] = {}
-        for key in ("segment_id", "order_index", "chunk_id", "segment_type", "speaker_hint", "resolved_speaker_id"):
+        for key in ("segment_id", "order_index", "chunk_id", "segment_type", "speaker_hint", "resolved_speaker_id", "emotion_hint", "importance_score"):
             if key in payload:
                 compact[key] = payload[key]
         raw_text = payload.get("raw_text")
@@ -212,14 +207,17 @@ class GroqClient(LLMProvider):
         payload_text = json.dumps(compact_payload, ensure_ascii=False)
         estimated_tokens = self._estimate_tokens(prompt) + self._estimate_tokens(payload_text)
         if estimated_tokens > prompt_budget:
-            LOGGER.debug(
-                "Groq payload over budget for %s: estimated=%s budget=%s",
-                prompt_name,
-                estimated_tokens,
-                prompt_budget,
-            )
-            compact_payload = self._truncate_value(compact_payload, max_chars=prompt_budget * 4)
-            payload_text = json.dumps(compact_payload, ensure_ascii=False)
+            if prompt_name in {"text_preparation.md", "story_structure.md", "audio_planning.md"}:
+                LOGGER.debug("Groq payload over budget for %s but skipping truncation by design", prompt_name)
+            else:
+                LOGGER.debug(
+                    "Groq payload over budget for %s: estimated=%s budget=%s",
+                    prompt_name,
+                    estimated_tokens,
+                    prompt_budget,
+                )
+                compact_payload = self._truncate_value(compact_payload, max_chars=prompt_budget * 4)
+                payload_text = json.dumps(compact_payload, ensure_ascii=False)
         body = {
             "model": self.settings.default_llm_model,
             "messages": [
@@ -276,26 +274,11 @@ class GroqClient(LLMProvider):
             backoff_seconds = min(backoff_seconds * 2, 8.0)
         raise ProviderError("Groq fallito su tutti i tentativi: " + " | ".join(errors))
 
-    async def cleanup_text(self, text: str) -> dict[str, Any]:
-        return await self._structured_generate("cleanup_text.md", {"text": text})
+    async def prepare_text(self, payload: dict[str, Any]) -> dict[str, Any]:
+        return await self._structured_generate("text_preparation.md", payload)
 
-    async def analyze_text(self, chunk_text: str) -> dict[str, Any]:
-        return await self._structured_generate("summary_rules.md", {"text": chunk_text})
+    async def structure_story(self, payload: dict[str, Any]) -> dict[str, Any]:
+        return await self._structured_generate("story_structure.md", payload)
 
-    async def extract_segments(self, chunk_text: str) -> dict[str, Any]:
-        return await self._structured_generate("segment_text.md", {"text": chunk_text})
-
-    async def resolve_speaker(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return await self._structured_generate("resolve_speaker.md", payload)
-
-    async def assign_voice(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return await self._structured_generate("assign_voice.md", payload)
-
-    async def extract_pronunciation_hints(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return await self._structured_generate("pronunciation_hints.md", payload)
-
-    async def add_tone_tags(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return await self._structured_generate("tone_tags.md", payload)
-
-    async def plan_media_keywords(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return await self._structured_generate("plan_media.md", payload)
+    async def plan_audio(self, payload: dict[str, Any]) -> dict[str, Any]:
+        return await self._structured_generate("audio_planning.md", payload)

@@ -26,25 +26,6 @@ class ReviewAction(str, Enum):
     reject = "reject"
 
 
-class CleanupChange(BaseModel):
-    original: str
-    cleaned: str
-    reason: str
-    confidence: float = Field(ge=0.0, le=1.0)
-    start_offset: int
-    end_offset: int
-    needs_review: bool = False
-
-
-class Chunk(BaseModel):
-    chunk_id: str
-    text: str
-    order_index: int
-    paragraph_start: int
-    paragraph_end: int
-    estimated_duration_seconds: float
-
-
 class Segment(BaseModel):
     segment_id: str
     chunk_id: str

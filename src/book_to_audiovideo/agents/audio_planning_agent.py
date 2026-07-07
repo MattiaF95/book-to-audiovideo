@@ -3,20 +3,20 @@ from __future__ import annotations
 from collections import defaultdict
 
 from book_to_audiovideo.agents.base import BaseAgent
-from book_to_audiovideo.models.domain import VoiceAssignment
+from book_to_audiovideo.models.domain import MediaPlanItem, PronunciationHint, ToneTag, VoiceAssignment
 from book_to_audiovideo.pipeline.context import PipelineContext
 from book_to_audiovideo.providers.provider_base import LLMProvider, TTSProvider
 
 
-class VoiceAssignmentAgent(BaseAgent):
-    stage_name = "voice_assignment"
+class AudioPlanningAgent(BaseAgent):
+    stage_name = "audio_planning"
 
     def __init__(self, llm: LLMProvider, tts: TTSProvider) -> None:
         self.llm = llm
         self.tts = tts
 
     async def execute(self, context: PipelineContext) -> None:
-        if self._has_complete_assignments(context):
+        if context.state.voice_assignments and context.state.tone_tags and context.state.media_plan:
             return
         available_voices = await self.tts.list_voices()
         account_pool = self._build_voice_pool(context.state.speakers, available_voices, source="account")
@@ -30,9 +30,13 @@ class VoiceAssignmentAgent(BaseAgent):
                 exclude_voice_ids={voice.get("voice_id") for voice in account_pool},
             )
             candidate_pool = self._merge_voice_pools(account_pool, shared_pool)
-        response = await self.llm.assign_voice(
+
+        response = await self.llm.plan_audio(
             {
+                "corrected_text": context.state.cleaned_text,
+                "context": context.state.text_context,
                 "speakers": [self._speaker_payload(speaker) for speaker in context.state.speakers],
+                "segments": [self._segment_payload(segment) for segment in context.state.segments],
                 "available_voices": [
                     {
                         "voice_id": voice.get("voice_id"),
@@ -44,16 +48,20 @@ class VoiceAssignmentAgent(BaseAgent):
                 ],
             }
         )
+
         candidate_by_id = {voice.get("voice_id"): voice for voice in candidate_pool if voice.get("voice_id")}
         candidate_by_name = {voice.get("name"): voice for voice in candidate_pool if voice.get("name")}
+
         assignments: list[VoiceAssignment] = []
-        for item in response.get("assignments", []):
+        for item in response.get("voice_assignments", []):
             enriched_item = dict(item)
             selected = None
             if enriched_item.get("voice_id"):
                 selected = candidate_by_id.get(enriched_item["voice_id"])
             if not selected and enriched_item.get("voice_name"):
                 selected = candidate_by_name.get(enriched_item["voice_name"])
+            if not selected and candidate_pool:
+                selected = candidate_pool[0]
             if selected:
                 enriched_item["voice_name"] = selected.get("name", enriched_item.get("voice_name"))
                 enriched_item["voice_id"] = selected.get("voice_id", enriched_item.get("voice_id"))
@@ -62,11 +70,24 @@ class VoiceAssignmentAgent(BaseAgent):
                     enriched_item["public_owner_id"] = selected.get("public_owner_id")
             assignment = await self.tts.select_voice(enriched_item)
             assignments.append(assignment)
+
+        pronunciation = [PronunciationHint.model_validate(item) for item in response.get("pronunciation", [])]
+        tone_tags = [ToneTag.model_validate(item) for item in response.get("tone_tags", [])]
+        media_plan = [MediaPlanItem.model_validate(item) for item in response.get("media_plan", [])]
+
         context.state.voice_assignments = assignments
+        context.state.pronunciation_overrides = pronunciation
+        context.state.tone_tags = tone_tags
+        context.state.media_plan = media_plan
         self.write_stage_json(
             context,
-            "06_voice_assignments.json",
-            {"assignments": [assignment.model_dump(mode="json") for assignment in assignments]},
+            "04_audio_planning.json",
+            {
+                "voice_assignments": [assignment.model_dump(mode="json") for assignment in assignments],
+                "pronunciation": [item.model_dump(mode="json") for item in pronunciation],
+                "tone_tags": [item.model_dump(mode="json") for item in tone_tags],
+                "media_plan": [item.model_dump(mode="json") for item in media_plan],
+            },
         )
 
     @staticmethod
@@ -81,6 +102,18 @@ class VoiceAssignmentAgent(BaseAgent):
         }
 
     @staticmethod
+    def _segment_payload(segment) -> dict[str, object]:
+        return {
+            "segment_id": segment.segment_id,
+            "order_index": segment.order_index,
+            "raw_text": segment.raw_text[:240],
+            "segment_type": segment.segment_type.value,
+            "speaker_hint": segment.speaker_hint,
+            "resolved_speaker_id": segment.resolved_speaker_id,
+            "emotion_hint": segment.emotion_hint,
+        }
+
+    @staticmethod
     def _compact_labels(labels: dict[str, object]) -> dict[str, object]:
         compact: dict[str, object] = {}
         for key, value in labels.items():
@@ -91,16 +124,7 @@ class VoiceAssignmentAgent(BaseAgent):
         return compact
 
     @staticmethod
-    def _has_complete_assignments(context: PipelineContext) -> bool:
-        if not context.state.voice_assignments:
-            return False
-        assigned_speakers = {item.speaker_id for item in context.state.voice_assignments}
-        required_speakers = {speaker.speaker_id for speaker in context.state.speakers}
-        return required_speakers.issubset(assigned_speakers)
-
-    @classmethod
     def _build_voice_pool(
-        cls,
         speakers,
         voices: list[dict],
         source: str,
@@ -112,7 +136,7 @@ class VoiceAssignmentAgent(BaseAgent):
         for speaker in speakers:
             matches = sorted(
                 (
-                    (cls._voice_match_score(speaker, voice), str(voice.get("voice_id")))
+                    (AudioPlanningAgent._voice_match_score(speaker, voice), str(voice.get("voice_id")))
                     for voice in voices
                     if voice.get("voice_id") and str(voice.get("voice_id")) not in exclude_voice_ids
                 ),
@@ -141,18 +165,6 @@ class VoiceAssignmentAgent(BaseAgent):
             pool.append(voice)
         return pool
 
-    @classmethod
-    def _pool_is_sufficient(cls, speakers, voices: list[dict]) -> bool:
-        if not voices:
-            return False
-        bucket_candidates: dict[str, int] = defaultdict(int)
-        for speaker in speakers:
-            bucket = cls._speaker_bucket(speaker)
-            if any(cls._voice_match_score(speaker, voice) > 0 for voice in voices):
-                bucket_candidates[bucket] += 1
-        required_buckets = {cls._speaker_bucket(speaker) for speaker in speakers}
-        return required_buckets.issubset(bucket_candidates.keys()) and len(voices) >= len(required_buckets)
-
     @staticmethod
     def _merge_voice_pools(account_pool: list[dict], shared_pool: list[dict]) -> list[dict]:
         merged = []
@@ -165,8 +177,20 @@ class VoiceAssignmentAgent(BaseAgent):
             merged.append(voice)
         return merged
 
-    @classmethod
-    def _voice_match_score(cls, speaker, voice: dict) -> int:
+    @staticmethod
+    def _pool_is_sufficient(speakers, voices: list[dict]) -> bool:
+        if not voices:
+            return False
+        bucket_candidates: dict[str, int] = defaultdict(int)
+        for speaker in speakers:
+            bucket = AudioPlanningAgent._speaker_bucket(speaker)
+            if any(AudioPlanningAgent._voice_match_score(speaker, voice) > 0 for voice in voices):
+                bucket_candidates[bucket] += 1
+        required_buckets = {AudioPlanningAgent._speaker_bucket(speaker) for speaker in speakers}
+        return required_buckets.issubset(bucket_candidates.keys()) and len(voices) >= len(required_buckets)
+
+    @staticmethod
+    def _voice_match_score(speaker, voice: dict) -> int:
         labels = voice.get("labels", {}) or {}
         score = 1
         speaker_gender = (speaker.gender or "").lower()

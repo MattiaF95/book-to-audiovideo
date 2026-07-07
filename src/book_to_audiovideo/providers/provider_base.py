@@ -8,35 +8,15 @@ from book_to_audiovideo.models.domain import MediaAsset, TTSOutput, VoiceAssignm
 
 class LLMProvider(ABC):
     @abstractmethod
-    async def cleanup_text(self, text: str) -> dict[str, Any]:
+    async def prepare_text(self, payload: dict[str, Any]) -> dict[str, Any]:
         raise NotImplementedError
 
     @abstractmethod
-    async def analyze_text(self, chunk_text: str) -> dict[str, Any]:
+    async def structure_story(self, payload: dict[str, Any]) -> dict[str, Any]:
         raise NotImplementedError
 
     @abstractmethod
-    async def extract_segments(self, chunk_text: str) -> dict[str, Any]:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def resolve_speaker(self, payload: dict[str, Any]) -> dict[str, Any]:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def assign_voice(self, payload: dict[str, Any]) -> dict[str, Any]:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def extract_pronunciation_hints(self, payload: dict[str, Any]) -> dict[str, Any]:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def add_tone_tags(self, payload: dict[str, Any]) -> dict[str, Any]:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def plan_media_keywords(self, payload: dict[str, Any]) -> dict[str, Any]:
+    async def plan_audio(self, payload: dict[str, Any]) -> dict[str, Any]:
         raise NotImplementedError
 
 
