@@ -4,7 +4,7 @@ import random
 from pathlib import Path
 
 from book_to_audiovideo.agents.base import BaseAgent
-from book_to_audiovideo.models.domain import AttentionRequest, MediaAsset
+from book_to_audiovideo.models.domain import AttentionRequest, MediaAsset, MediaPlanItem
 from book_to_audiovideo.pipeline.context import PipelineContext
 from book_to_audiovideo.pipeline.errors import ApprovalRequiredError, ProviderError
 from book_to_audiovideo.providers.provider_base import StockMediaProvider
@@ -22,7 +22,7 @@ class MediaFetchAgent(BaseAgent):
         if self._has_valid_cached_media(context):
             return
         media_dir = Path(context.state.artifact_dir) / "media"
-        first_item = context.state.media_plan[0]
+        first_item = self._select_media_plan_item(context)
         video_error: str | None = None
         for query in self.media_service.build_fallback_queries(first_item):
             try:
@@ -52,3 +52,24 @@ class MediaFetchAgent(BaseAgent):
         if not context.state.downloaded_media:
             return False
         return any(asset.media_type == "video" for asset in context.state.downloaded_media)
+
+    @staticmethod
+    def _select_media_plan_item(context: PipelineContext) -> MediaPlanItem:
+        if context.state.media_plan:
+            return context.state.media_plan[0]
+        scene = str(context.state.text_context.get("scene") or "").strip()
+        tone = str(context.state.text_context.get("tone") or "").strip()
+        setting = str(context.state.text_context.get("setting") or "").strip()
+        fallback_keywords = [value for value in [scene, setting, tone] if value]
+        if not fallback_keywords:
+            fallback_keywords = ["cinematic background"]
+        return MediaPlanItem(
+            segment_id=context.state.book_id or context.state.job_id,
+            video_keywords=fallback_keywords[:3],
+            sfx_keywords=[],
+            mood=tone or "neutral",
+            scene_type=scene or "generic",
+            media_intensity="low",
+            needs_sfx=False,
+            sfx_timeline_hint=None,
+        )

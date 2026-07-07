@@ -14,10 +14,9 @@ class TextCleanupAgent(BaseAgent):
     async def execute(self, context: PipelineContext) -> None:
         if context.state.cleaned_text:
             return
-        response = await self.llm.run_task("text_cleanup.md", {"text": context.state.raw_text})
-        context.state.cleaned_text = (response.get("corrected_text") or context.state.raw_text).strip()
-        context.state.text_corrections = list(response.get("corrections", []))
-        context.state.text_warnings = list(response.get("warnings", []))
+        context.state.cleaned_text = context.state.raw_text.strip()
+        context.state.text_corrections = []
+        context.state.text_warnings = ["text_cleanup saltato temporaneamente: uso del testo originale"]
         self.write_stage_json(
             context,
             "02_text_cleanup.json",

@@ -1,5 +1,6 @@
 Task: define only the per-segment prosody hints needed for TTS delivery.
 Return only JSON:
+Use the schema as a shape only. Do not add speaker, pronunciation, or media analysis.
 {
   "tone_tags": [
     {

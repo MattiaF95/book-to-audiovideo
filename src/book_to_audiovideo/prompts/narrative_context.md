@@ -1,5 +1,6 @@
 Task: infer only the global narrative context of the cleaned text.
 Return only JSON:
+Use real values, not placeholder literals from the schema.
 {
   "context": {
     "scene": "string",

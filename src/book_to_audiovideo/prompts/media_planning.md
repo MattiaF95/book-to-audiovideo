@@ -1,5 +1,6 @@
 Task: define only the background media plan for each segment.
 Return only JSON:
+Use the schema as a shape only. Do not add voices, pronunciation, or speaker analysis.
 {
   "media_plan": [
     {

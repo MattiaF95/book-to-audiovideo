@@ -16,11 +16,14 @@ try:
 except ImportError:  # pragma: no cover - dependency is optional in unit tests
     Groq = None  # type: ignore[assignment]
 
+import httpx
+
 from book_to_audiovideo.config import Settings
 from book_to_audiovideo.pipeline.errors import ProviderError
 from book_to_audiovideo.providers.provider_base import LLMProvider
 
 LOGGER = logging.getLogger(__name__)
+GROQ_OPENAI_BASE_URL = "https://api.groq.com/openai/v1"
 
 
 class GroqClient(LLMProvider):
@@ -251,29 +254,144 @@ class GroqClient(LLMProvider):
             "temperature": 0.6,
             "max_completion_tokens": max_tokens,
             "top_p": 0.95,
-            "reasoning_effort": "default",
-            "stream": True,
-            "stop": None,
-            "response_format": {"type": "json_object"},
+            "stream": False,
         }
 
-    def _stream_json(self, body: dict[str, Any]) -> str:
+    def _extract_completion_text(self, completion: Any) -> str:
+        choices = getattr(completion, "choices", None) or []
+        if not choices:
+            raise ProviderError("Risposta Groq priva di choices")
+        message = getattr(choices[0], "message", None)
+        if message is None:
+            raise ProviderError("Risposta Groq priva di message")
+        content = getattr(message, "content", None)
+        if not content:
+            raise ProviderError("Risposta Groq priva di content testuale")
+        return content
+
+    def _groq_completion_text(self, body: dict[str, Any]) -> str:
         if Groq is None:
             raise ProviderError("Pacchetto groq non disponibile")
         client = Groq(api_key=self.settings.groq_api_key) if self.settings.groq_api_key else Groq()
         completion = client.chat.completions.create(**body)
-        content_parts: list[str] = []
-        for chunk in completion:
-            choices = getattr(chunk, "choices", None) or []
-            if not choices:
-                continue
-            delta = getattr(choices[0], "delta", None)
-            if delta is None:
-                continue
-            content = getattr(delta, "content", None)
-            if content:
-                content_parts.append(content)
-        return "".join(content_parts)
+        return self._extract_completion_text(completion)
+
+    def _extract_json_object(self, text: str) -> dict[str, Any]:
+        decoder = json.JSONDecoder()
+        stripped = text.lstrip()
+        start = stripped.find("{")
+        if start < 0:
+            raise json.JSONDecodeError("No JSON object found", text, 0)
+        candidate = stripped[start:]
+        value, _ = decoder.raw_decode(candidate)
+        if not isinstance(value, dict):
+            raise json.JSONDecodeError("JSON root is not an object", text, 0)
+        return value
+
+    def _validate_response(self, prompt_name: str, response: dict[str, Any], payload: dict[str, Any]) -> None:
+        def require_non_empty_string(field: str) -> None:
+            value = response.get(field)
+            if not isinstance(value, str) or not value.strip() or value.strip().lower() == "string":
+                raise ProviderError(f"{prompt_name} ha restituito {field} vuoto o non valido")
+
+        def require_list(field: str, expected_len: int | None = None) -> list[Any]:
+            value = response.get(field)
+            if not isinstance(value, list):
+                raise ProviderError(f"{prompt_name} ha restituito {field} non valido")
+            if not value:
+                raise ProviderError(f"{prompt_name} ha restituito {field} vuoto")
+            if expected_len is not None and len(value) != expected_len:
+                raise ProviderError(
+                    f"{prompt_name} ha restituito {field} con lunghezza {len(value)}, attesa {expected_len}"
+                )
+            return value
+
+        if prompt_name == "text_cleanup.md":
+            return
+        if prompt_name == "narrative_context.md":
+            context = response.get("context")
+            if not isinstance(context, dict) or not context:
+                raise ProviderError("narrative_context.md ha restituito context vuoto o non valido")
+            return
+        if prompt_name == "dialogue_segmentation.md":
+            segments = require_list("segments")
+            for item in segments:
+                if not isinstance(item, dict):
+                    raise ProviderError("dialogue_segmentation.md ha restituito un segmento non valido")
+                if not isinstance(item.get("segment_id"), str) or not item["segment_id"].strip() or item["segment_id"].strip().lower() == "string":
+                    raise ProviderError("dialogue_segmentation.md ha restituito segment_id non valido")
+                if not isinstance(item.get("raw_text"), str) or not item["raw_text"].strip() or item["raw_text"].strip().lower() == "string":
+                    raise ProviderError("dialogue_segmentation.md ha restituito raw_text non valido")
+                if item.get("segment_type") not in {"narration", "dialogue"}:
+                    raise ProviderError("dialogue_segmentation.md ha restituito segment_type non valido")
+            return
+        if prompt_name == "speaker_registry.md":
+            speakers = require_list("speakers")
+            if not any(isinstance(item, dict) and item.get("role") == "narrator" for item in speakers):
+                raise ProviderError("speaker_registry.md non contiene il narratore")
+            for item in speakers:
+                if not isinstance(item, dict):
+                    raise ProviderError("speaker_registry.md ha restituito uno speaker non valido")
+                for field in ("speaker_id", "name", "continuity_key"):
+                    value = item.get(field)
+                    if not isinstance(value, str) or not value.strip() or value.strip().lower() == "string":
+                        raise ProviderError(f"speaker_registry.md ha restituito {field} non valido")
+                if item.get("role") not in {"narrator", "character"}:
+                    raise ProviderError("speaker_registry.md ha restituito role non valido")
+                gender = item.get("gender")
+                if gender not in {"male", "female", None}:
+                    raise ProviderError("speaker_registry.md ha restituito gender non valido")
+            return
+        if prompt_name == "speaker_attribution.md":
+            expected_len = len(payload.get("segments", []))
+            require_list("assignments", expected_len=expected_len)
+            return
+        if prompt_name == "narrative_annotation.md":
+            expected_len = len(payload.get("segments", []))
+            require_list("annotations", expected_len=expected_len)
+            return
+        if prompt_name == "voice_casting.md":
+            expected_len = len(payload.get("speakers", []))
+            require_list("voice_assignments", expected_len=expected_len)
+            return
+        if prompt_name == "pronunciation_planning.md":
+            expected_len = len(payload.get("segments", []))
+            require_list("pronunciation", expected_len=expected_len)
+            return
+        if prompt_name == "prosody_planning.md":
+            expected_len = len(payload.get("segments", []))
+            require_list("tone_tags", expected_len=expected_len)
+            return
+        if prompt_name == "media_planning.md":
+            expected_len = len(payload.get("segments", []))
+            require_list("media_plan", expected_len=expected_len)
+            return
+
+    async def _http_completion_text(self, body: dict[str, Any]) -> str:
+        if not self.settings.groq_api_key:
+            raise ProviderError("GROQ_API_KEY mancante")
+        headers = {
+            "Authorization": f"Bearer {self.settings.groq_api_key}",
+            "Content-Type": "application/json",
+        }
+        async with httpx.AsyncClient(base_url=GROQ_OPENAI_BASE_URL, timeout=120.0) as client:
+            response = await client.post("/chat/completions", headers=headers, json=body)
+            if response.is_error:
+                raise ProviderError(f"Groq HTTP {response.status_code}: {response.text}")
+            data = response.json()
+        choices = data.get("choices") or []
+        if not choices:
+            raise ProviderError("Risposta Groq priva di choices")
+        message = choices[0].get("message") or {}
+        content = message.get("content")
+        if not content:
+            raise ProviderError("Risposta Groq priva di content testuale")
+        return content
+
+    async def _completion_text(self, body: dict[str, Any]) -> str:
+        if Groq is not None:
+            return await asyncio.to_thread(self._groq_completion_text, body)
+        return await self._http_completion_text(body)
 
     async def _structured_generate(self, prompt_name: str, payload: dict[str, Any]) -> dict[str, Any]:
         prompt = self._load_prompt(prompt_name)
@@ -299,14 +417,16 @@ class GroqClient(LLMProvider):
             retryable_error = False
             await self._wait_for_global_limits(reserved_tokens)
             try:
-                text = await asyncio.to_thread(self._stream_json, body)
+                text = await self._completion_text(body)
             except Exception as exc:  # pragma: no cover - network/provider errors depend on runtime
                 errors.append(str(exc))
                 retry_after = self._retry_after_seconds(exc)
                 retryable_error = True
             else:
                 try:
-                    return json.loads(text)
+                    response = self._extract_json_object(text)
+                    self._validate_response(prompt_name, response, compact_payload)
+                    return response
                 except json.JSONDecodeError as exc:
                     errors.append(f"risposta non valida: {exc}")
                     retryable_error = True

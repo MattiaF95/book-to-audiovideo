@@ -1,5 +1,6 @@
 Task: choose one stable voice assignment for each speaker using only the provided available voices.
 Return only JSON:
+Use the voice list as given. Keep narrator and recurring characters stable across the whole project.
 {
   "voice_assignments": [
     {
@@ -16,5 +17,6 @@ Rules:
 - Assign exactly one stable voice per speaker.
 - The narrator must keep one consistent voice for the whole project.
 - Reuse speaker_id values exactly as provided.
+- If the same speaker appears in multiple dialogue segments, keep the same voice_id and voice_name.
 - Keep tts_prompt_tags short and sparse.
 - Do not plan pronunciation, media, or tone here.

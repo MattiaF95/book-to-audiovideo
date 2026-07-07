@@ -1,10 +1,10 @@
 # 📚 Book to Audiovideo
 
-Pipeline locale MVP-first per trasformare un libro in un video narrato usando solo provider API esterni: Groq per analisi testo, ElevenLabs per TTS, Pixabay per video e FFmpeg per il compositing finale.
+Pipeline locale MVP-first per trasformare un libro in un video narrato usando solo provider API esterni: Groq via API OpenAI-compatible per analisi testo, ElevenLabs per TTS, Pixabay per video e FFmpeg per il compositing finale.
 
 | Area | Scelta | Ruolo |
 |---|---|---|
-| 🧠 LLM | `qwen/qwen3.6-27b` via Groq | Cleanup testo, analisi narrativa, casting voci, pronuncia, prosodia e media planning in pass separati |
+| 🧠 LLM | `qwen/qwen3.6-27b` via Groq API OpenAI-compatible | Cleanup testo, analisi narrativa, casting voci, pronuncia, prosodia e media planning in pass separati |
 | 🔊 TTS | ElevenLabs | Sintesi vocale per i segmenti narrati e dialogati |
 | 🎬 Media | Pixabay | Video di sfondo |
 | 🎞️ Compositing | FFmpeg | Mix audio, loop video, export finale |

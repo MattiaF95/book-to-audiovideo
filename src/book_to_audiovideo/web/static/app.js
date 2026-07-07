@@ -66,6 +66,12 @@ async function fetchJobs() {
   const response = await fetch("/api/jobs");
   const jobs = await response.json();
   jobsCount.textContent = jobs.length;
+  if (!selectedJobId && jobs.length) {
+    selectedJobId = jobs[0].job_id;
+  }
+  if (selectedJobId && !jobs.some(job => job.job_id === selectedJobId) && jobs.length) {
+    selectedJobId = jobs[0].job_id;
+  }
   jobsList.innerHTML = jobs.map(job => `
     <button class="job-pill ${job.job_id === selectedJobId ? "active" : ""}" data-job-id="${job.job_id}">
       <strong>${job.source_name}</strong>
@@ -286,6 +292,7 @@ uploadForm.addEventListener("submit", async (event) => {
   fileInput.value = "";
   fileLabel.textContent = "Trascina o seleziona un file `.txt`, `.md`, `.pdf`, `.docx`";
   submitButton.disabled = true;
+  selectedJobId = payload.job_id;
   await refreshAll();
 });
 

@@ -1,5 +1,6 @@
 Task: identify only the pronunciation risks that matter for TTS.
 Return only JSON:
+Use the schema as a shape only. Do not add speaker, scene, or media analysis.
 {
   "pronunciation": [
     {
