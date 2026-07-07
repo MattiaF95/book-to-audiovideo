@@ -1,20 +1,24 @@
-Task: apply minimal conservative cleanup to the input text.
-Return only JSON:
+Task: minimally clean the input text.
+Return only JSON.
+Do not add explanations.
+
+Schema:
 {
   "corrected_text": "string",
   "corrections": [
     {
       "original": "string",
       "corrected": "string",
-      "reason": "typo, spacing, punctuation, OCR noise, or other",
+      "reason": "typo | spacing | punctuation | OCR noise | other",
       "confidence": 0.0
     }
   ],
-  "warnings": ["string"]
+  "warnings": []
 }
+
 Rules:
-- Preserve meaning, wording, and authorial style.
-- Fix only obvious typos, spacing, punctuation, and high-confidence OCR noise.
-- Do not infer context, emotions, speaker identity, or segmentation here.
-- Do not add or remove content unless the correction is obvious.
-- If uncertain, keep the original text and add a warning.
+- Preserve meaning and style.
+- Fix only obvious errors.
+- Do not infer speaker, scene, emotion, or context.
+- Do not split the text.
+- If unsure, leave it unchanged.

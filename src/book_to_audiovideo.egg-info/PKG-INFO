@@ -27,7 +27,7 @@ Pipeline locale MVP-first per trasformare un libro in un video narrato usando so
 
 | Area | Scelta | Ruolo |
 |---|---|---|
-| 🧠 LLM | `openai/gpt-oss-20b` via Groq | Cleanup testo, analisi narrativa, casting voci, pronuncia, prosodia e media planning in pass separati |
+| 🧠 LLM | `qwen/qwen3.6-27b` via Groq | Cleanup testo, analisi narrativa, casting voci, pronuncia, prosodia e media planning in pass separati |
 | 🔊 TTS | ElevenLabs | Sintesi vocale per i segmenti narrati e dialogati |
 | 🎬 Media | Pixabay | Video di sfondo |
 | 🎞️ Compositing | FFmpeg | Mix audio, loop video, export finale |
@@ -184,7 +184,7 @@ Ogni job crea `data/output/<job_id>/` con:
 - La pipeline non continua in loop quando un provider fallisce.
 - Se Pixabay non restituisce un video utilizzabile, il job entra in `needs_attention`.
 - Il video di sfondo è unico; se più corto viene loopato da FFmpeg.
-- Groq usa l'endpoint OpenAI-compatible Chat Completions e forza output JSON con `response_format`.
+- Groq usa lo SDK ufficiale con Chat Completions in streaming e forza output JSON con `response_format`.
 - Le chiamate Groq sono serializzate con un rate limiter globale `LLM_MIN_INTERVAL_SECONDS` tra richieste consecutive.
 - Il flusso LLM è stato separato in pass piccoli a compito singolo per ridurre errori di validazione JSON e coreference.
 - Il narratore è uno speaker unico e stabile in tutto il progetto.

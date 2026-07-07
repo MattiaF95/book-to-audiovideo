@@ -5,13 +5,16 @@ import json
 import logging
 import math
 import time
-from datetime import datetime, timezone
 from collections import deque
+from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 from typing import Any
 
-import httpx
+try:
+    from groq import Groq
+except ImportError:  # pragma: no cover - dependency is optional in unit tests
+    Groq = None  # type: ignore[assignment]
 
 from book_to_audiovideo.config import Settings
 from book_to_audiovideo.pipeline.errors import ProviderError
@@ -30,8 +33,6 @@ class GroqClient(LLMProvider):
     def __init__(self, settings: Settings, prompts_dir: Path) -> None:
         self.settings = settings
         self.prompts_dir = prompts_dir
-        self.base_url = "https://api.groq.com/openai/v1/chat/completions"
-        self.model_fallbacks = [settings.default_llm_model]
         self.task_token_budgets = {
             "text_cleanup.md": settings.groq_cleanup_token_budget,
             "narrative_context.md": settings.groq_enrichment_token_budget,
@@ -57,25 +58,14 @@ class GroqClient(LLMProvider):
     def _request_reservation(self, prompt_name: str, prompt_text: str, payload_text: str) -> int:
         prompt_budget = self._budget_for(prompt_name)
         estimated_tokens = self._estimate_tokens(prompt_text) + self._estimate_tokens(payload_text)
-        if prompt_name in {
-            "text_cleanup.md",
-            "narrative_context.md",
-            "dialogue_segmentation.md",
-            "speaker_registry.md",
-            "speaker_attribution.md",
-            "narrative_annotation.md",
-            "voice_casting.md",
-            "pronunciation_planning.md",
-            "prosody_planning.md",
-            "media_planning.md",
-        }:
-            requested = max(estimated_tokens + 200, prompt_budget)
-        else:
-            requested = min(prompt_budget, max(estimated_tokens + 200, 300))
+        requested = max(estimated_tokens + 200, prompt_budget)
         return max(1, min(requested, self.settings.groq_tokens_per_minute))
 
-    def _retry_after_seconds(self, response: httpx.Response) -> float | None:
-        value = response.headers.get("Retry-After")
+    def _retry_after_seconds(self, exc: Exception) -> float | None:
+        response = getattr(exc, "response", None)
+        if response is None:
+            return None
+        value = getattr(response, "headers", {}).get("Retry-After")
         if not value:
             return None
         try:
@@ -139,7 +129,7 @@ class GroqClient(LLMProvider):
                 "context": payload.get("context", {}),
                 "segments": [self._compact_segment(item) for item in payload.get("segments", [])],
             }
-        return self._truncate_value(payload, max_chars=self._budget_for(prompt_name) * 4)
+        return payload
 
     def _compact_segment(self, payload: Any) -> Any:
         if not isinstance(payload, dict):
@@ -248,56 +238,59 @@ class GroqClient(LLMProvider):
                     return
             await asyncio.sleep(wait_for)
 
-    def _headers(self) -> dict[str, str]:
+    def _create_body(self, prompt: str, payload_text: str, prompt_name: str) -> dict[str, Any]:
+        max_tokens = min(4096, max(256, self._budget_for(prompt_name)))
         return {
-            "Authorization": f"Bearer {self.settings.groq_api_key}",
-            "Content-Type": "application/json",
+            "model": self.settings.default_llm_model,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": f"{prompt}\nINPUT_JSON:\n{payload_text}",
+                }
+            ],
+            "temperature": 0.6,
+            "max_completion_tokens": max_tokens,
+            "top_p": 0.95,
+            "reasoning_effort": "default",
+            "stream": True,
+            "stop": None,
+            "response_format": {"type": "json_object"},
         }
+
+    def _stream_json(self, body: dict[str, Any]) -> str:
+        if Groq is None:
+            raise ProviderError("Pacchetto groq non disponibile")
+        client = Groq(api_key=self.settings.groq_api_key) if self.settings.groq_api_key else Groq()
+        completion = client.chat.completions.create(**body)
+        content_parts: list[str] = []
+        for chunk in completion:
+            choices = getattr(chunk, "choices", None) or []
+            if not choices:
+                continue
+            delta = getattr(choices[0], "delta", None)
+            if delta is None:
+                continue
+            content = getattr(delta, "content", None)
+            if content:
+                content_parts.append(content)
+        return "".join(content_parts)
 
     async def _structured_generate(self, prompt_name: str, payload: dict[str, Any]) -> dict[str, Any]:
         prompt = self._load_prompt(prompt_name)
         compact_payload = self._compact_payload(prompt_name, payload)
-        prompt_budget = self._budget_for(prompt_name)
         payload_text = json.dumps(compact_payload, ensure_ascii=False)
+        prompt_budget = self._budget_for(prompt_name)
         estimated_tokens = self._estimate_tokens(prompt) + self._estimate_tokens(payload_text)
         if estimated_tokens > prompt_budget:
-            if prompt_name in {
-                "text_cleanup.md",
-                "narrative_context.md",
-                "dialogue_segmentation.md",
-                "speaker_registry.md",
-                "speaker_attribution.md",
-                "narrative_annotation.md",
-                "voice_casting.md",
-                "pronunciation_planning.md",
-                "prosody_planning.md",
-                "media_planning.md",
-            }:
-                LOGGER.debug("Groq payload over budget for %s but skipping truncation by design", prompt_name)
-            else:
-                LOGGER.debug(
-                    "Groq payload over budget for %s: estimated=%s budget=%s",
-                    prompt_name,
-                    estimated_tokens,
-                    prompt_budget,
-                )
-                compact_payload = self._truncate_value(compact_payload, max_chars=prompt_budget * 4)
-                payload_text = json.dumps(compact_payload, ensure_ascii=False)
-        body = {
-            "model": self.settings.default_llm_model,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "Return JSON only.",
-                },
-                {
-                    "role": "user",
-                    "content": f"{prompt}\nINPUT_JSON:\n{payload_text}",
-                },
-            ],
-            "response_format": {"type": "json_object"},
-            "temperature": 0.1,
-        }
+            LOGGER.debug(
+                "Groq payload over budget for %s: estimated=%s budget=%s",
+                prompt_name,
+                estimated_tokens,
+                prompt_budget,
+            )
+            compact_payload = self._truncate_value(compact_payload, max_chars=prompt_budget * 4)
+            payload_text = json.dumps(compact_payload, ensure_ascii=False)
+        body = self._create_body(prompt, payload_text, prompt_name)
         errors: list[str] = []
         backoff_seconds = 1.0
         reserved_tokens = self._request_reservation(prompt_name, prompt, payload_text)
@@ -305,33 +298,18 @@ class GroqClient(LLMProvider):
             retry_after: float | None = None
             retryable_error = False
             await self._wait_for_global_limits(reserved_tokens)
-            async with httpx.AsyncClient(timeout=120) as client:
-                for model_name in self.model_fallbacks:
-                    request_body = {**body, "model": model_name}
-                    try:
-                        response = await client.post(self.base_url, headers=self._headers(), json=request_body)
-                    except httpx.HTTPError as exc:
-                        errors.append(f"{model_name}: network {exc}")
-                        retryable_error = True
-                        continue
-                    if response.status_code >= 400:
-                        errors.append(f"{model_name}: {response.status_code} {response.text}")
-                        if response.status_code == 429:
-                            retry_after = self._retry_after_seconds(response)
-                            retryable_error = True
-                            break
-                        if response.status_code in {500, 503}:
-                            retryable_error = True
-                            continue
-                        raise ProviderError(f"Groq errore {response.status_code}: {response.text}")
-                    data = response.json()
-                    try:
-                        text = data["choices"][0]["message"]["content"]
-                        return json.loads(text)
-                    except (KeyError, IndexError, json.JSONDecodeError) as exc:
-                        errors.append(f"{model_name}: risposta non valida")
-                        retryable_error = True
-                        continue
+            try:
+                text = await asyncio.to_thread(self._stream_json, body)
+            except Exception as exc:  # pragma: no cover - network/provider errors depend on runtime
+                errors.append(str(exc))
+                retry_after = self._retry_after_seconds(exc)
+                retryable_error = True
+            else:
+                try:
+                    return json.loads(text)
+                except json.JSONDecodeError as exc:
+                    errors.append(f"risposta non valida: {exc}")
+                    retryable_error = True
             if attempt >= self.settings.max_llm_retries or not retryable_error:
                 break
             wait_for = retry_after if retry_after is not None else backoff_seconds
