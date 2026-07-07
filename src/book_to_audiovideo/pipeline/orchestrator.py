@@ -129,6 +129,7 @@ class PipelineOrchestrator:
                 if state.stop_requested:
                     raise asyncio.CancelledError
                 self._append_event(state, agent.stage_name, "running", f"Stage avviato: {agent.stage_name}")
+                self.job_store.save(state)
                 await agent.run(context)
                 self._append_event(state, agent.stage_name, "completed", f"Stage completato: {agent.stage_name}")
                 self.job_store.save(state)

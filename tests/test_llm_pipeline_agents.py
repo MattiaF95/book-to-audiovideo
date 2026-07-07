@@ -2,6 +2,8 @@ from pathlib import Path
 
 import anyio
 
+from book_to_audiovideo.agents.base import BaseAgent
+from book_to_audiovideo.agents.manifest_agent import ManifestAgent
 from book_to_audiovideo.agents.audio_planning_agent import AudioPlanningAgent
 from book_to_audiovideo.agents.story_structure_agent import StoryStructureAgent
 from book_to_audiovideo.agents.text_preparation_agent import TextPreparationAgent
@@ -56,6 +58,13 @@ class _FakeTTSProvider:
             continuity_anchor=payload.get("continuity_anchor", payload["speaker_id"]),
             tts_prompt_tags=payload.get("tts_prompt_tags", []),
         )
+
+
+class _NoopAgent(BaseAgent):
+    stage_name = "ingestion"
+
+    async def execute(self, context: PipelineContext) -> None:
+        context.state.raw_text = "test"
 
 
 def test_text_preparation_agent_writes_context(tmp_path: Path) -> None:
@@ -254,3 +263,23 @@ def test_audio_planning_agent_assigns_voice_and_media(tmp_path: Path) -> None:
     assert context.state.media_plan[0].segment_id == "seg-1"
     assert context.state.tone_tags[0].segment_id == "seg-1"
     assert context.state.pronunciation_overrides[0].segment_id == "seg-1"
+
+
+def test_each_agent_writes_stage_manifest_and_final_manifest(tmp_path: Path) -> None:
+    settings = Settings(OUTPUT_DIR=tmp_path, CACHE_DIR=tmp_path / "cache")
+    state = PipelineState(
+        job_id="job-1",
+        book_id="book-1",
+        source_path=str(tmp_path / "source.txt"),
+        source_name="source.txt",
+        source_type=".txt",
+        artifact_dir=str(tmp_path / "job"),
+    )
+    context = PipelineContext(settings=settings, state=state)
+
+    anyio.run(_NoopAgent().run, context)
+    anyio.run(ManifestAgent().run, context)
+
+    assert (tmp_path / "job" / "manifests" / "ingestion.json").exists()
+    assert (tmp_path / "job" / "manifests" / "manifest.json").exists()
+    assert (tmp_path / "job" / "manifest.json").exists()

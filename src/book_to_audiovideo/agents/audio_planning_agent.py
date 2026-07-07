@@ -71,9 +71,18 @@ class AudioPlanningAgent(BaseAgent):
             assignment = await self.tts.select_voice(enriched_item)
             assignments.append(assignment)
 
-        pronunciation = [PronunciationHint.model_validate(item) for item in response.get("pronunciation", [])]
-        tone_tags = [ToneTag.model_validate(item) for item in response.get("tone_tags", [])]
-        media_plan = [MediaPlanItem.model_validate(item) for item in response.get("media_plan", [])]
+        pronunciation = self._normalize_pronunciation(
+            context,
+            [PronunciationHint.model_validate(item) for item in response.get("pronunciation", [])],
+        )
+        tone_tags = self._normalize_tone_tags(
+            context,
+            [ToneTag.model_validate(item) for item in response.get("tone_tags", [])],
+        )
+        media_plan = self._normalize_media_plan(
+            context,
+            [MediaPlanItem.model_validate(item) for item in response.get("media_plan", [])],
+        )
 
         context.state.voice_assignments = assignments
         context.state.pronunciation_overrides = pronunciation
@@ -222,3 +231,64 @@ class AudioPlanningAgent(BaseAgent):
             return "narrator"
         gender = (speaker.gender or "unknown").lower()
         return f"character:{gender}"
+
+    @staticmethod
+    def _normalize_pronunciation(context: PipelineContext, items: list[PronunciationHint]) -> list[PronunciationHint]:
+        by_segment = {item.segment_id: item for item in items}
+        normalized: list[PronunciationHint] = []
+        for segment in context.state.segments:
+            normalized.append(
+                by_segment.get(
+                    segment.segment_id,
+                    PronunciationHint(
+                        segment_id=segment.segment_id,
+                        pronunciation_overrides={},
+                        phonetic_hints={},
+                        problem_terms=[],
+                        confidence=0.0,
+                    ),
+                )
+            )
+        return normalized
+
+    @staticmethod
+    def _normalize_tone_tags(context: PipelineContext, items: list[ToneTag]) -> list[ToneTag]:
+        by_segment = {item.segment_id: item for item in items}
+        normalized: list[ToneTag] = []
+        for segment in context.state.segments:
+            normalized.append(
+                by_segment.get(
+                    segment.segment_id,
+                    ToneTag(
+                        segment_id=segment.segment_id,
+                        tagged_text=segment.raw_text,
+                        tags_used=[],
+                        tag_confidence=0.0,
+                    ),
+                )
+            )
+        return normalized
+
+    @staticmethod
+    def _normalize_media_plan(context: PipelineContext, items: list[MediaPlanItem]) -> list[MediaPlanItem]:
+        by_segment = {item.segment_id: item for item in items}
+        normalized: list[MediaPlanItem] = []
+        fallback_keywords = context.state.text_context.get("scene")
+        default_query = [str(fallback_keywords).strip()] if fallback_keywords else ["cinematic background"]
+        for segment in context.state.segments:
+            normalized.append(
+                by_segment.get(
+                    segment.segment_id,
+                    MediaPlanItem(
+                        segment_id=segment.segment_id,
+                        video_keywords=default_query,
+                        sfx_keywords=[],
+                        mood=segment.emotion_hint or str(context.state.text_context.get("tone") or "neutral"),
+                        scene_type="generic",
+                        media_intensity="low",
+                        needs_sfx=False,
+                        sfx_timeline_hint=None,
+                    ),
+                )
+            )
+        return normalized

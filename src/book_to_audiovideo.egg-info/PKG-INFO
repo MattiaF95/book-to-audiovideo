@@ -27,7 +27,7 @@ Pipeline locale MVP-first per trasformare un libro in un video narrato usando so
 
 | Area | Scelta | Ruolo |
 |---|---|---|
-| 🧠 LLM | `llama-3.3-70b-versatile` via Groq | Pulizia testo, analisi contesto/emozioni, segmentazione speaker-aware, voice planning e media planning |
+| 🧠 LLM | `openai/gpt-oss-20b` via Groq | Pulizia testo, analisi contesto/emozioni, segmentazione speaker-aware, voice planning e media planning |
 | 🔊 TTS | ElevenLabs | Sintesi vocale per i segmenti narrati e dialogati |
 | 🎬 Media | Pixabay | Video di sfondo |
 | 🎞️ Compositing | FFmpeg | Mix audio, loop video, export finale |

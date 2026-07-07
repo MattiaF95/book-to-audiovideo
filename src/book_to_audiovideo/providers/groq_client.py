@@ -33,9 +33,9 @@ class GroqClient(LLMProvider):
         self.base_url = "https://api.groq.com/openai/v1/chat/completions"
         self.model_fallbacks = [settings.default_llm_model]
         self.task_token_budgets = {
-            "text_preparation.md": max(settings.groq_cleanup_token_budget, 12000),
-            "story_structure.md": max(settings.groq_segment_token_budget, 16000),
-            "audio_planning.md": max(settings.groq_media_token_budget, 12000),
+            "text_preparation.md": settings.groq_cleanup_token_budget,
+            "story_structure.md": settings.groq_segment_token_budget,
+            "audio_planning.md": settings.groq_media_token_budget,
         }
 
     def _load_prompt(self, name: str) -> str:
@@ -51,8 +51,10 @@ class GroqClient(LLMProvider):
         prompt_budget = self._budget_for(prompt_name)
         estimated_tokens = self._estimate_tokens(prompt_text) + self._estimate_tokens(payload_text)
         if prompt_name in {"text_preparation.md", "story_structure.md", "audio_planning.md"}:
-            return max(estimated_tokens + 200, prompt_budget)
-        return min(prompt_budget, max(estimated_tokens + 200, 300))
+            requested = max(estimated_tokens + 200, prompt_budget)
+        else:
+            requested = min(prompt_budget, max(estimated_tokens + 200, 300))
+        return max(1, min(requested, self.settings.groq_tokens_per_minute))
 
     def _retry_after_seconds(self, response: httpx.Response) -> float | None:
         value = response.headers.get("Retry-After")

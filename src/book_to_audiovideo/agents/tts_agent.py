@@ -29,12 +29,12 @@ class TTSAgent(BaseAgent):
             if speaker_id not in voice_by_speaker:
                 raise PipelineError(f"Voice assignment mancante per speaker {speaker_id}")
             assignment = voice_by_speaker[speaker_id]
-            tone = tone_by_segment[segment.segment_id]
+            tone = tone_by_segment.get(segment.segment_id)
             stitch_history = context.state.speaker_tts_history.setdefault(speaker_id, TTSStitchHistory())
             previous_request_ids = stitch_history.previous_request_ids[-3:]
             previous_history_item_ids = stitch_history.previous_history_item_ids[-3:]
             next_text = context.state.segments[index + 1].raw_text if index + 1 < len(context.state.segments) else None
-            tts_text = self._resolve_tts_text(segment.raw_text, tone.tagged_text)
+            tts_text = self._resolve_tts_text(segment.raw_text, tone.tagged_text if tone else None)
             response = await self.tts_provider.synthesize(
                 {
                     "segment_id": segment.segment_id,
@@ -60,8 +60,8 @@ class TTSAgent(BaseAgent):
         )
 
     @staticmethod
-    def _resolve_tts_text(raw_text: str, tagged_text: str) -> str:
-        candidate = tagged_text.strip()
+    def _resolve_tts_text(raw_text: str, tagged_text: str | None) -> str:
+        candidate = (tagged_text or "").strip()
         if candidate and candidate.lower() != "string":
             return candidate
         return raw_text.strip()

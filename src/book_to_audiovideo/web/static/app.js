@@ -9,7 +9,7 @@ const fileInput = document.getElementById("file-input");
 const fileLabel = document.getElementById("file-label");
 const uploadStatus = document.getElementById("upload-status");
 const submitButton = document.getElementById("submit-button");
-let selectedJobId = new URLSearchParams(window.location.search).get("job");
+let selectedJobId = null;
 let uploadInFlight = false;
 
 const stages = [
@@ -38,6 +38,16 @@ const stageDescriptions = {
   manifest: "Scrive manifest e riepilogo finale del job."
 };
 
+function renderEmptyDashboard() {
+  jobStatus.textContent = "Nessun job selezionato";
+  jobExplainer.classList.add("empty");
+  jobExplainer.innerHTML = "Seleziona un job dalla colonna sinistra per vedere fase corrente, significato dello step attivo e stato finale atteso.";
+  jobSummary.classList.add("empty");
+  jobSummary.innerHTML = "La home resta pulita finché non apri un job dalla lista a sinistra.";
+  jobDetail.classList.add("empty");
+  jobDetail.innerHTML = "Seleziona un job per vedere agent, eventi e risultato finale.";
+}
+
 async function fetchJobs() {
   const response = await fetch("/api/jobs");
   const jobs = await response.json();
@@ -48,9 +58,6 @@ async function fetchJobs() {
       <span>${job.status} · ${job.current_stage}</span>
     </button>
   `).join("");
-  if (!selectedJobId && jobs.length) {
-    selectedJobId = jobs[0].job_id;
-  }
 }
 
 function getStageState(job, stage) {
@@ -187,10 +194,12 @@ function renderJob(job) {
 
 async function fetchSelectedJob() {
   if (!selectedJobId) {
+    renderEmptyDashboard();
     return;
   }
   const response = await fetch(`/api/jobs/${selectedJobId}`);
   if (!response.ok) {
+    renderEmptyDashboard();
     return;
   }
   const job = await response.json();
@@ -232,7 +241,6 @@ jobsList.addEventListener("click", (event) => {
     return;
   }
   selectedJobId = button.dataset.jobId;
-  history.replaceState({}, "", `/?job=${selectedJobId}`);
   fetchSelectedJob();
 });
 
@@ -258,8 +266,6 @@ uploadForm.addEventListener("submit", async (event) => {
     return;
   }
   const payload = await response.json();
-  selectedJobId = payload.job_id;
-  history.replaceState({}, "", `/?job=${selectedJobId}`);
   uploadStatus.textContent = "File caricato, job avviato.";
   uploadInFlight = false;
   uploadForm.reset();
@@ -282,6 +288,7 @@ fileInput.addEventListener("change", () => {
   submitButton.disabled = false;
 });
 
+renderEmptyDashboard();
 refreshAll();
 setInterval(refreshAll, 4000);
 window.reviewJob = reviewJob;

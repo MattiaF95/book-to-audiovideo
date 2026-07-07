@@ -29,7 +29,7 @@ class _FakeClient:
     async def post(self, url: str, headers: dict, json: dict) -> _FakeResponse:
         assert url == "https://api.groq.com/openai/v1/chat/completions"
         assert headers["Authorization"].startswith("Bearer ")
-        assert json["model"] == "llama-3.3-70b-versatile"
+        assert json["model"] == "openai/gpt-oss-20b"
         assert json["response_format"] == {"type": "json_object"}
         return _FakeResponse(
             200,
@@ -51,7 +51,7 @@ def test_groq_client_returns_structured_json(monkeypatch, tmp_path: Path) -> Non
     (prompts_dir / "text_preparation.md").write_text("prompt", encoding="utf-8")
     settings = Settings(
         GROQ_API_KEY="test-key",
-        DEFAULT_LLM_MODEL="llama-3.3-70b-versatile",
+        DEFAULT_LLM_MODEL="openai/gpt-oss-20b",
         MAX_LLM_RETRIES=1,
         LLM_MIN_INTERVAL_SECONDS=0,
     )
