@@ -15,7 +15,6 @@ from book_to_audiovideo.utils.retry import retryable
 class PixabayClient(StockMediaProvider):
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
-        self._sfx_available = True
 
     @retryable()
     async def search_videos(self, query: str) -> list[dict[str, Any]]:
@@ -32,32 +31,11 @@ class PixabayClient(StockMediaProvider):
         return response.json().get("hits", [])
 
     @retryable()
-    async def search_sfx(self, query: str) -> list[dict[str, Any]]:
-        if not self._sfx_available:
-            return []
-        try:
-            async with httpx.AsyncClient(timeout=60) as client:
-                for endpoint in ("https://pixabay.com/api/sounds/", "https://pixabay.com/api/audio/"):
-                    response = await client.get(
-                        endpoint,
-                        params={"key": self.settings.pixabay_api_key, "q": query, "per_page": 10},
-                    )
-                    if response.status_code == 404:
-                        continue
-                    if response.status_code >= 400:
-                        raise ProviderError(f"Pixabay audio errore {response.status_code}: {response.text}")
-                    return response.json().get("hits", [])
-        except httpx.HTTPError as exc:
-            raise ProviderError(f"Pixabay rete/DNS non raggiungibile: {exc}") from exc
-        self._sfx_available = False
-        return []
-
-    @retryable()
     async def download_media(self, asset: dict[str, Any], target_dir: str, media_type: str, query: str) -> MediaAsset:
         target_path = Path(target_dir)
         target_path.mkdir(parents=True, exist_ok=True)
         if media_type == "video":
-            source_url = asset["videos"]["medium"]["url"]
+            source_url = self._best_video_url(asset)
             extension = ".mp4"
             asset_id = str(asset["id"])
         else:
@@ -85,3 +63,23 @@ class PixabayClient(StockMediaProvider):
             duration_seconds=None,
             metadata={"tags": asset.get("tags", ""), "user": asset.get("user", "")},
         )
+
+    @staticmethod
+    def _best_video_url(asset: dict[str, Any]) -> str | None:
+        variants = asset.get("videos", {})
+        best_url = None
+        best_score = -1
+        for item in variants.values():
+            if not isinstance(item, dict):
+                continue
+            url = item.get("url")
+            if not url:
+                continue
+            width = int(item.get("width") or 0)
+            height = int(item.get("height") or 0)
+            size = int(item.get("size") or 0)
+            score = max(width * height, size)
+            if score > best_score:
+                best_score = score
+                best_url = url
+        return best_url

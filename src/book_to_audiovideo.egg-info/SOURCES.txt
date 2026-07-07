@@ -1,3 +1,4 @@
+LICENSE
 README.md
 pyproject.toml
 src/book_to_audiovideo/__init__.py
@@ -18,11 +19,9 @@ src/book_to_audiovideo/agents/dialogue_segmentation_agent.py
 src/book_to_audiovideo/agents/ingestion_agent.py
 src/book_to_audiovideo/agents/manifest_agent.py
 src/book_to_audiovideo/agents/media_fetch_agent.py
-src/book_to_audiovideo/agents/media_planning_agent.py
-src/book_to_audiovideo/agents/pronunciation_agent.py
 src/book_to_audiovideo/agents/qa_agent.py
+src/book_to_audiovideo/agents/segment_enrichment_agent.py
 src/book_to_audiovideo/agents/speaker_resolution_agent.py
-src/book_to_audiovideo/agents/tone_tagging_agent.py
 src/book_to_audiovideo/agents/tts_agent.py
 src/book_to_audiovideo/agents/video_compose_agent.py
 src/book_to_audiovideo/agents/voice_assignment_agent.py
@@ -33,7 +32,7 @@ src/book_to_audiovideo/pipeline/context.py
 src/book_to_audiovideo/pipeline/errors.py
 src/book_to_audiovideo/pipeline/orchestrator.py
 src/book_to_audiovideo/providers/elevenlabs_client.py
-src/book_to_audiovideo/providers/gemini_client.py
+src/book_to_audiovideo/providers/groq_client.py
 src/book_to_audiovideo/providers/pixabay_client.py
 src/book_to_audiovideo/providers/provider_base.py
 src/book_to_audiovideo/services/duration_service.py
@@ -50,9 +49,17 @@ src/book_to_audiovideo/web/dependencies.py
 tests/test_chunking.py
 tests/test_cleanup.py
 tests/test_dialogue_segmentation.py
+tests/test_elevenlabs_client.py
 tests/test_ffmpeg_service.py
+tests/test_groq_client.py
+tests/test_media_fetch_agent.py
 tests/test_media_planning.py
 tests/test_orchestrator.py
+tests/test_pixabay_client.py
 tests/test_pronunciation.py
+tests/test_qa_agent.py
+tests/test_segment_enrichment.py
 tests/test_tone_tagging.py
+tests/test_tts_agent.py
 tests/test_voice_assignment.py
+tests/test_web_app.py

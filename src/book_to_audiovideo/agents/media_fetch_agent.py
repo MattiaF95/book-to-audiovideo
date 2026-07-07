@@ -18,12 +18,10 @@ class MediaFetchAgent(BaseAgent):
         self.media_service = media_service
 
     async def execute(self, context: PipelineContext) -> None:
-        if context.state.downloaded_media:
+        if self._has_valid_cached_media(context):
             return
-        assets: list[MediaAsset] = []
         media_dir = Path(context.state.artifact_dir) / "media"
         first_item = context.state.media_plan[0]
-        video_asset: MediaAsset | None = None
         video_error: str | None = None
         for query in self.media_service.build_fallback_queries(first_item):
             try:
@@ -31,41 +29,25 @@ class MediaFetchAgent(BaseAgent):
                 if not hits:
                     continue
                 video_asset = await self.media_provider.download_media(hits[0], str(media_dir / "video"), "video", query)
+                context.state.downloaded_media = [video_asset]
+                self.write_stage_json(
+                    context,
+                    "10_downloaded_media.json",
+                    {"assets": [video_asset.model_dump(mode="json")]},
+                )
                 break
             except ProviderError as exc:
                 video_error = str(exc)
-        if not video_asset:
+        if not context.state.downloaded_media:
             context.state.attention_request = AttentionRequest(
                 stage=self.stage_name,
                 reason="Impossibile recuperare il video di sfondo da Pixabay",
                 details={"error": video_error or "nessun risultato"},
             )
             raise ApprovalRequiredError(context.state.attention_request.reason)
-        assets.append(video_asset)
-        for item in context.state.media_plan:
-            if not item.needs_sfx:
-                continue
-            fetched = None
-            last_error: str | None = None
-            for query in self.media_service.build_sfx_queries(item):
-                try:
-                    hits = await self.media_provider.search_sfx(query)
-                    if not hits:
-                        continue
-                    fetched = await self.media_provider.download_media(hits[0], str(media_dir / "sfx"), "audio", query)
-                    break
-                except ProviderError as exc:
-                    last_error = str(exc)
-            if not fetched:
-                context.state.warnings.append(
-                    f"SFX saltato per segment {item.segment_id}: {last_error or 'nessun risultato da Pixabay'}"
-                )
-                continue
-            fetched.metadata["segment_id"] = item.segment_id
-            assets.append(fetched)
-        context.state.downloaded_media = assets
-        self.write_stage_json(
-            context,
-            "10_downloaded_media.json",
-            {"assets": [asset.model_dump(mode="json") for asset in assets]},
-        )
+
+    @staticmethod
+    def _has_valid_cached_media(context: PipelineContext) -> bool:
+        if not context.state.downloaded_media:
+            return False
+        return any(asset.media_type == "video" for asset in context.state.downloaded_media)

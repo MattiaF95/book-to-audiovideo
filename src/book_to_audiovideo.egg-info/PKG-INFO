@@ -4,6 +4,7 @@ Version: 0.1.0
 Summary: Pipeline locale per trasformare libri in video narrati con provider API esterni.
 Requires-Python: >=3.11
 Description-Content-Type: text/markdown
+License-File: LICENSE
 Requires-Dist: fastapi>=0.116.0
 Requires-Dist: uvicorn[standard]>=0.35.0
 Requires-Dist: jinja2>=3.1.4
@@ -18,39 +19,61 @@ Requires-Dist: pypdf>=4.3.1
 Provides-Extra: dev
 Requires-Dist: pytest>=8.3.2; extra == "dev"
 Requires-Dist: pytest-asyncio>=0.23.8; extra == "dev"
+Dynamic: license-file
 
-# Book to Audiovideo
+# 📚 Book to Audiovideo
 
-Pipeline locale MVP-first per trasformare un libro in un video narrato usando solo provider API esterni: Gemini per analisi testo, ElevenLabs per TTS, Pixabay per video/SFX e FFmpeg per il compositing finale.
+Pipeline locale MVP-first per trasformare un libro in un video narrato usando solo provider API esterni: Groq per analisi testo, ElevenLabs per TTS, Pixabay per video/SFX e FFmpeg per il compositing finale.
 
-## Cosa fa
+| Area | Scelta | Ruolo |
+|---|---|---|
+| 🧠 LLM | `llama-3.1-8b-instant` via Groq | Analisi testo, pulizia conservativa, segmentazione, speaker resolution, media planning |
+| 🔊 TTS | ElevenLabs | Sintesi vocale per i segmenti narrati e dialogati |
+| 🎬 Media | Pixabay | Video di sfondo e SFX |
+| 🎞️ Compositing | FFmpeg | Mix audio, loop video, export finale |
 
-- carica file `txt`, `md`, `pdf`, `docx`
-- pulisce il testo con Gemini in modo conservativo
-- spezza il testo in chunk e segmenti `narration/dialogue`
-- risolve speaker, gender probabile e voce coerente
-- decide se servono SFX per ciascun segmento
-- cerca un video di sfondo unico e lo mette in loop fino alla durata dell’audio finale
-- genera il parlato con ElevenLabs usando `eleven_v3` e fallback ai modelli secondari
-- mixa voce e SFX con volume effetti ridotto
-- esporta `manifest.json`, artefatti intermedi e video finale
+---
 
-## Architettura
+## 🤖 Pipeline / AI Agent
 
-- `src/book_to_audiovideo/agents/`: 15 agent piccoli, uno per responsabilità
-- `src/book_to_audiovideo/providers/`: adapter live Gemini, ElevenLabs, Pixabay
-- `src/book_to_audiovideo/services/`: parsing file, chunking, FFmpeg, durata, query media
-- `src/book_to_audiovideo/pipeline/orchestrator.py`: stato job, persistenza, resume e pause manuali
-- `src/book_to_audiovideo/web/`: dashboard locale FastAPI + template/static frontend
+| # | Fase | Agente | Descrizione breve |
+|---|---|---|---|
+| 1 | 📥 Ingestion | `IngestionAgent` | Carica il testo sorgente |
+| 2 | ✨ Cleanup | `CleanupAgent` | Pulisce il testo grezzo |
+| 3 | 🔪 Chunking | `ChunkingAgent` | Divide in parti gestibili |
+| 4 | 🗣️ Dialogue | `DialogueSegmentationAgent` | Separa dialoghi e narrazione |
+| 5 | 👥 Speaker | `SpeakerResolutionAgent` | Identifica i parlanti |
+| 6 | 🎭 Voice | `VoiceAssignmentAgent` | Assegna voci coerenti |
+| 7 | 🧩 Enrichment | `SegmentEnrichmentAgent` | Aggiunge tono e media hints |
+| 8 | 🎥 Media | `MediaFetchAgent` | Recupera video e SFX |
+| 9 | 🎙️ TTS | `TTSAgent` | Genera voce sintetica |
+| 10 | 🎚️ Mix | `AudioMixAgent` | Miscela audio finale |
+| 11 | 🎬 Video | `VideoComposeAgent` | Unisce audio e video |
+| 12 | 🧪 QA | `QAAgent` | Controlla durata e loudness |
+| 13 | 📦 Manifest | `ManifestAgent` | Scrive il riepilogo |
 
-## Dashboard locale
+---
+
+## 🧱 Architettura
+
+| Cartella | Contenuto |
+|---|---|
+| `src/book_to_audiovideo/agents/` | Agent piccoli con compiti separati |
+| `src/book_to_audiovideo/providers/` | Adapter live Groq, ElevenLabs, Pixabay |
+| `src/book_to_audiovideo/services/` | Parsing file, chunking, FFmpeg, durata, query media |
+| `src/book_to_audiovideo/pipeline/orchestrator.py` | Stato job, persistenza, resume e pause manuali |
+| `src/book_to_audiovideo/web/` | Dashboard locale FastAPI + template/static frontend |
+
+---
+
+## 🖥️ Dashboard locale
 
 La dashboard permette di:
 
-- caricare il file sorgente
-- vedere lo stato di ogni agent e gli eventi del job
-- approvare o rifiutare stop manuali `needs_attention`
-- aprire il video finale generato
+- caricare il file sorgente.
+- vedere lo stato di ogni agent e gli eventi del job.
+- approvare o rifiutare stop manuali `needs_attention`.
+- aprire il video finale generato. 🎬
 
 Avvio:
 
@@ -64,7 +87,9 @@ python -m book_to_audiovideo.main serve
 
 Poi apri `http://127.0.0.1:8000`.
 
-## Esecuzione CLI
+---
+
+## 🏃 Esecuzione CLI
 
 Per eseguire un job senza dashboard:
 
@@ -72,61 +97,88 @@ Per eseguire un job senza dashboard:
 python -m book_to_audiovideo.main run path/al/libro.txt
 ```
 
-## Variabili ambiente
+---
 
-- `GEMINI_API_KEY`
-- `ELEVENLABS_API_KEY`
-- `PIXABAY_API_KEY`
-- `OUTPUT_DIR`
-- `CACHE_DIR`
-- `LOG_LEVEL`
-- `DEFAULT_TTS_MODEL`
-- `DEFAULT_GEMINI_MODEL`
-- `FFMPEG_BIN`
-- `FFPROBE_BIN`
+## 🔐 Variabili ambiente
 
-## Flusso pipeline
+| Variabile | Uso |
+|---|---|
+| `GROQ_API_KEY` | Accesso a Groq |
+| `ELEVENLABS_API_KEY` | Accesso a ElevenLabs |
+| `PIXABAY_API_KEY` | Accesso a Pixabay |
+| `OUTPUT_DIR` | Directory output |
+| `CACHE_DIR` | Cache locale |
+| `LOG_LEVEL` | Livello log |
+| `DEFAULT_TTS_MODEL` | Modello TTS di default |
+| `DEFAULT_LLM_MODEL` | Modello LLM di default |
+| `LLM_MIN_INTERVAL_SECONDS` | Rate limit globale tra chiamate LLM |
+| `FFMPEG_BIN` | Path binario FFmpeg |
+| `FFPROBE_BIN` | Path binario ffprobe |
 
-1. `ingestion`
-2. `cleanup`
-3. `chunking`
-4. `dialogue_segmentation`
-5. `speaker_resolution`
-6. `voice_assignment`
-7. `pronunciation`
-8. `tone_tagging`
-9. `media_planning`
-10. `media_fetch`
-11. `tts`
-12. `audio_mix`
-13. `video_compose`
-14. `qa`
-15. `manifest`
+---
 
-## Artefatti output
+## 🔁 Flusso pipeline
+
+| # | Stage |
+|---|---|
+| 1 | `ingestion` |
+| 2 | `cleanup` |
+| 3 | `chunking` |
+| 4 | `dialogue_segmentation` |
+| 5 | `speaker_resolution` |
+| 6 | `voice_assignment` |
+| 7 | `segment_enrichment` |
+| 8 | `media_fetch` |
+| 9 | `tts` |
+| 10 | `audio_mix` |
+| 11 | `video_compose` |
+| 12 | `qa` |
+| 13 | `manifest` |
+
+---
+
+## 📁 Artefatti output
 
 Ogni job crea `data/output/<job_id>/` con:
 
-- `state.json`
-- JSON stage-by-stage
-- `source/`
-- `media/video/` e `media/sfx/`
-- `tts/`
-- `mix/`
-- `final/<book_id>.mp4`
-- `manifest.json`
+| Cartella/File | Contenuto |
+|---|---|
+| `state.json` | Stato completo del job |
+| JSON stage-by-stage | Output di ogni fase |
+| `source/` | File sorgente e normalizzazioni |
+| `media/video/` | Video selezionati |
+| `media/sfx/` | Effetti sonori scaricati |
+| `tts/` | Audio generati da ElevenLabs |
+| `mix/` | Mix audio finali |
+| `final/<book_id>.mp4` | Video finale |
+| `manifest.json` | Riepilogo completo |
 
-## Note operative
+---
+
+## 📝 Note operative
 
 - La pipeline non continua in loop quando un provider fallisce.
 - Se Pixabay non restituisce media utilizzabile, il job entra in `needs_attention`.
 - Gli SFX vengono messi sotto la voce; se il segmento non richiede effetti, sotto la voce resta silenzio.
 - Il video di sfondo è unico; se più corto viene loopato da FFmpeg.
-- Gli endpoint ElevenLabs relativi a voci pubbliche possono evolvere: l’adapter è isolato proprio per poterlo correggere senza toccare gli agent.
+- Groq usa l'endpoint OpenAI-compatible Chat Completions e forza output JSON con `response_format`.
+- Le chiamate Groq sono serializzate con un rate limiter globale `LLM_MIN_INTERVAL_SECONDS` tra richieste consecutive.
+- Pronunciation, tone tagging e media planning sono stati accorpati in un solo pass LLM per ridurre il rischio di `429`.
+- ElevenLabs request stitching è usato solo con modelli compatibili; non viene usato con `eleven_v3`.
+- Nei modelli che supportano stitching, gli ID di contesto vengono mantenuti in una coda fissa di massimo 3 elementi.
+- Il QA finale non blocca il job: scrive `warning` se loudness o durata non sono nei valori attesi. ⚠️
 
-## Limiti MVP
+---
 
-- I test sono offline e mockano il comportamento strutturale, non le API esterne.
-- L’endpoint Pixabay per audio può variare o non essere disponibile in alcuni piani/API surface.
-- La scelta automatica della voce dipende dalle voci disponibili nel tuo account e nella voice library.
-- La dashboard per ora gestisce solo upload, monitoraggio, approve/reject e apertura output finale.
+## 📌 Limiti MVP
+
+| Limite | Dettaglio |
+|---|---|
+| Test | Offline e mock, non API reali |
+| Pixabay | L’API audio può variare o non essere disponibile |
+| Voce | La scelta dipende dalle voci del tuo account |
+| Dashboard | Solo upload, monitoraggio, approve/reject e apertura output finale |
+
+## ⭐ Crediti
+
+Autore: **MattiaF95**

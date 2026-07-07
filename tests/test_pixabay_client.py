@@ -27,11 +27,13 @@ class _FakeClient:
         return _FakeResponse(404)
 
 
-def test_search_sfx_falls_back_to_empty_list_on_404(monkeypatch) -> None:
-    settings = Settings(PIXABAY_API_KEY="test", OUTPUT_DIR=Path("/tmp"), CACHE_DIR=Path("/tmp/cache"))
-    client = PixabayClient(settings)
-    monkeypatch.setattr("book_to_audiovideo.providers.pixabay_client.httpx.AsyncClient", lambda timeout: _FakeClient())
+def test_best_video_url_prefers_highest_quality_variant() -> None:
+    asset = {
+        "videos": {
+            "tiny": {"url": "https://example.com/tiny.mp4", "width": 640, "height": 360, "size": 1000},
+            "medium": {"url": "https://example.com/medium.mp4", "width": 1280, "height": 720, "size": 2000},
+            "large": {"url": "https://example.com/large.mp4", "width": 1920, "height": 1080, "size": 3000},
+        }
+    }
 
-    result = anyio.run(client.search_sfx, "wind")
-    assert result == []
-    assert client._sfx_available is False
+    assert PixabayClient._best_video_url(asset) == "https://example.com/large.mp4"

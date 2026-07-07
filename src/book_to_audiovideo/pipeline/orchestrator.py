@@ -187,10 +187,12 @@ class PipelineOrchestrator:
         if not state.attention_request:
             raise PipelineError("Nessuna approval pendente")
         if not approved:
+            state.attention_request = None
             state.status = JobStatus.rejected
             self._append_event(state, state.current_stage, "rejected", "Job rifiutato da dashboard")
             self.job_store.save(state)
             return state
+        state.attention_request = None
         state.status = JobStatus.running
         self._append_event(state, state.current_stage, "approved", "Job riattivato da dashboard")
         self.job_store.save(state)

@@ -13,9 +13,6 @@ class _FakeMediaProvider:
     async def search_videos(self, query: str) -> list[dict]:
         return [{"id": 1, "videos": {"medium": {"url": "https://example.com/video.mp4"}}}]
 
-    async def search_sfx(self, query: str) -> list[dict]:
-        return []
-
     async def download_media(self, asset: dict, target_dir: str, media_type: str, query: str) -> MediaAsset:
         path = Path(target_dir)
         path.mkdir(parents=True, exist_ok=True)
@@ -35,11 +32,8 @@ class _FakeMediaService:
     def build_fallback_queries(self, item: MediaPlanItem) -> list[str]:
         return ["forest night mist"]
 
-    def build_sfx_queries(self, item: MediaPlanItem) -> list[str]:
-        return ["wind"]
 
-
-def test_media_fetch_agent_skips_missing_sfx(tmp_path: Path) -> None:
+def test_media_fetch_agent_downloads_only_video(tmp_path: Path) -> None:
     settings = Settings(OUTPUT_DIR=tmp_path, CACHE_DIR=tmp_path / "cache", PIXABAY_API_KEY="test")
     artifact_dir = tmp_path / "job"
     artifact_dir.mkdir()
@@ -69,4 +63,3 @@ def test_media_fetch_agent_skips_missing_sfx(tmp_path: Path) -> None:
 
     assert len(context.state.downloaded_media) == 1
     assert context.state.downloaded_media[0].media_type == "video"
-    assert context.state.warnings

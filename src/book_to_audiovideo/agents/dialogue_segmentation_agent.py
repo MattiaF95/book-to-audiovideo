@@ -13,7 +13,7 @@ class DialogueSegmentationAgent(BaseAgent):
         self.llm = llm
 
     async def execute(self, context: PipelineContext) -> None:
-        if context.state.segments:
+        if self._has_valid_cached_segments(context):
             return
         segments: list[Segment] = []
         for chunk in context.state.chunks:
@@ -27,3 +27,10 @@ class DialogueSegmentationAgent(BaseAgent):
             "04_segments.json",
             {"segments": [segment.model_dump(mode="json") for segment in context.state.segments]},
         )
+
+    @staticmethod
+    def _has_valid_cached_segments(context: PipelineContext) -> bool:
+        if not context.state.segments:
+            return False
+        chunk_ids = {chunk.chunk_id for chunk in context.state.chunks}
+        return all(segment.chunk_id in chunk_ids and segment.raw_text.strip() for segment in context.state.segments)

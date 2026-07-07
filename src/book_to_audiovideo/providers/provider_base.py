@@ -46,6 +46,10 @@ class TTSProvider(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def list_shared_voices(self) -> list[dict[str, Any]]:
+        raise NotImplementedError
+
+    @abstractmethod
     async def ensure_public_voice_available(self, descriptor: dict[str, Any]) -> str:
         raise NotImplementedError
 
@@ -61,10 +65,6 @@ class TTSProvider(ABC):
 class StockMediaProvider(ABC):
     @abstractmethod
     async def search_videos(self, query: str) -> list[dict[str, Any]]:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def search_sfx(self, query: str) -> list[dict[str, Any]]:
         raise NotImplementedError
 
     @abstractmethod

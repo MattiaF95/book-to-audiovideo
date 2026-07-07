@@ -1,12 +1,12 @@
 # 📚 Book to Audiovideo
 
-Pipeline locale MVP-first per trasformare un libro in un video narrato usando solo provider API esterni: Groq per analisi testo, ElevenLabs per TTS, Pixabay per video/SFX e FFmpeg per il compositing finale.
+Pipeline locale MVP-first per trasformare un libro in un video narrato usando solo provider API esterni: Groq per analisi testo, ElevenLabs per TTS, Pixabay per video e FFmpeg per il compositing finale.
 
 | Area | Scelta | Ruolo |
 |---|---|---|
 | 🧠 LLM | `llama-3.1-8b-instant` via Groq | Analisi testo, pulizia conservativa, segmentazione, speaker resolution, media planning |
 | 🔊 TTS | ElevenLabs | Sintesi vocale per i segmenti narrati e dialogati |
-| 🎬 Media | Pixabay | Video di sfondo e SFX |
+| 🎬 Media | Pixabay | Video di sfondo |
 | 🎞️ Compositing | FFmpeg | Mix audio, loop video, export finale |
 
 ---
@@ -22,7 +22,7 @@ Pipeline locale MVP-first per trasformare un libro in un video narrato usando so
 | 5 | 👥 Speaker | `SpeakerResolutionAgent` | Identifica i parlanti |
 | 6 | 🎭 Voice | `VoiceAssignmentAgent` | Assegna voci coerenti |
 | 7 | 🧩 Enrichment | `SegmentEnrichmentAgent` | Aggiunge tono e media hints |
-| 8 | 🎥 Media | `MediaFetchAgent` | Recupera video e SFX |
+| 8 | 🎥 Media | `MediaFetchAgent` | Recupera il video di sfondo |
 | 9 | 🎙️ TTS | `TTSAgent` | Genera voce sintetica |
 | 10 | 🎚️ Mix | `AudioMixAgent` | Miscela audio finale |
 | 11 | 🎬 Video | `VideoComposeAgent` | Unisce audio e video |
@@ -124,7 +124,6 @@ Ogni job crea `data/output/<job_id>/` con:
 | JSON stage-by-stage | Output di ogni fase |
 | `source/` | File sorgente e normalizzazioni |
 | `media/video/` | Video selezionati |
-| `media/sfx/` | Effetti sonori scaricati |
 | `tts/` | Audio generati da ElevenLabs |
 | `mix/` | Mix audio finali |
 | `final/<book_id>.mp4` | Video finale |
@@ -135,8 +134,7 @@ Ogni job crea `data/output/<job_id>/` con:
 ## 📝 Note operative
 
 - La pipeline non continua in loop quando un provider fallisce.
-- Se Pixabay non restituisce media utilizzabile, il job entra in `needs_attention`.
-- Gli SFX vengono messi sotto la voce; se il segmento non richiede effetti, sotto la voce resta silenzio.
+- Se Pixabay non restituisce un video utilizzabile, il job entra in `needs_attention`.
 - Il video di sfondo è unico; se più corto viene loopato da FFmpeg.
 - Groq usa l'endpoint OpenAI-compatible Chat Completions e forza output JSON con `response_format`.
 - Le chiamate Groq sono serializzate con un rate limiter globale `LLM_MIN_INTERVAL_SECONDS` tra richieste consecutive.
@@ -152,7 +150,7 @@ Ogni job crea `data/output/<job_id>/` con:
 | Limite | Dettaglio |
 |---|---|
 | Test | Offline e mock, non API reali |
-| Pixabay | L’API audio può variare o non essere disponibile |
+| Pixabay | Solo ricerca video; il risultato viene scaricato nella variante di qualità più alta disponibile |
 | Voce | La scelta dipende dalle voci del tuo account |
 | Dashboard | Solo upload, monitoraggio, approve/reject e apertura output finale |
 

@@ -51,38 +51,60 @@ class ElevenLabsClient(TTSProvider):
             raise ProviderError(f"ElevenLabs voices errore {response.status_code}: {response.text}")
         return response.json().get("voices", [])
 
-    async def ensure_public_voice_available(self, descriptor: dict[str, Any]) -> str:
-        if descriptor.get("voice_id"):
-            return descriptor["voice_id"]
+    @retryable()
+    async def list_shared_voices(self) -> list[dict[str, Any]]:
         try:
             async with httpx.AsyncClient(timeout=60) as client:
-                response = await client.get(f"{self.base_url}/shared-voices", headers=self._headers(), params={"page_size": 100})
+                response = await client.get(
+                    f"{self.base_url}/shared-voices",
+                    headers=self._headers(),
+                    params={"page_size": 100},
+                )
         except httpx.HTTPError as exc:
             raise ProviderError(f"ElevenLabs rete/DNS non raggiungibile: {exc}") from exc
         if response.status_code >= 400:
             raise ProviderError(f"ElevenLabs shared voices errore {response.status_code}: {response.text}")
-        voices = response.json().get("voices", [])
+        return response.json().get("voices", [])
+
+    async def ensure_public_voice_available(self, descriptor: dict[str, Any]) -> str:
+        if descriptor.get("voice_source") == "account" and descriptor.get("voice_id"):
+            return descriptor["voice_id"]
+        account_voices = await self.list_voices()
+        target_name = (descriptor.get("voice_name") or "").strip()
+        target_voice_id = descriptor.get("voice_id")
+        for voice in account_voices:
+            if target_voice_id and voice.get("voice_id") == target_voice_id:
+                return target_voice_id
+            if target_name and voice.get("name") == target_name:
+                return str(voice.get("voice_id"))
+        voices = await self.list_shared_voices()
         target = None
         for voice in voices:
-            if voice.get("name") == descriptor.get("voice_name"):
+            if target_voice_id and voice.get("voice_id") == target_voice_id:
+                target = voice
+                break
+            if target_name and voice.get("name") == target_name:
                 target = voice
                 break
         if not target:
-            raise ProviderError(f"Voce pubblica non trovata: {descriptor.get('voice_name')}")
+            raise ProviderError(f"Voce pubblica non trovata: {target_name}")
         public_owner_id = target.get("public_owner_id") or target.get("user_id")
         public_voice_id = target.get("voice_id")
         if not public_owner_id or not public_voice_id:
-            raise ProviderError(f"Metadati voce pubblica incompleti per {descriptor.get('voice_name')}")
+            raise ProviderError(f"Metadati voce pubblica incompleti per {target_name or public_voice_id}")
         try:
             async with httpx.AsyncClient(timeout=60) as client:
                 add_response = await client.post(
                     f"{self.base_url}/voices/add/{public_owner_id}/{public_voice_id}",
                     headers=self._headers(),
-                    json={"new_name": target.get("name", descriptor.get("voice_name", "shared_voice"))},
+                    json={"new_name": target.get("name", target_name or "shared_voice")},
                 )
         except httpx.HTTPError as exc:
             raise ProviderError(f"ElevenLabs rete/DNS non raggiungibile: {exc}") from exc
         if add_response.status_code >= 400:
+            for voice in await self.list_voices():
+                if voice.get("name") == target.get("name"):
+                    return str(voice.get("voice_id"))
             raise ProviderError(f"Aggiunta voce pubblica fallita {add_response.status_code}: {add_response.text}")
         payload = add_response.json()
         return payload.get("voice_id") or public_voice_id

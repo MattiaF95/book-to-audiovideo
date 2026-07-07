@@ -26,7 +26,7 @@ const stageDescriptions = {
   speaker_resolution: "Stabilizza i personaggi e assegna chi parla.",
   voice_assignment: "Sceglie le voci ElevenLabs coerenti per narratore e personaggi.",
   segment_enrichment: "In un solo pass decide pronuncia, tono e piano media.",
-  media_fetch: "Cerca video di sfondo unico e SFX necessari.",
+  media_fetch: "Cerca il video di sfondo.",
   tts: "Genera l'audio parlato per ogni segmento.",
   audio_mix: "Mixa voce ed effetti con voce dominante.",
   video_compose: "Combina audio finale e video di sfondo.",
@@ -133,7 +133,7 @@ function renderJob(job) {
     </div>`;
   }).join("");
 
-  const attention = job.attention_request ? `
+  const attention = job.status === "needs_attention" && job.attention_request ? `
     <div class="attention-box">
       <strong>Intervento richiesto</strong>
       <p>${job.attention_request.reason}</p>
@@ -199,7 +199,12 @@ async function fetchSelectedJob() {
 async function reviewJob(jobId, action) {
   const formData = new FormData();
   formData.append("action", action);
-  await fetch(`/api/jobs/${jobId}/review`, { method: "POST", body: formData });
+  const response = await fetch(`/api/jobs/${jobId}/review`, { method: "POST", body: formData });
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({ detail: "Review fallita" }));
+    window.alert(payload.detail || "Review fallita");
+    return;
+  }
   await refreshAll();
 }
 

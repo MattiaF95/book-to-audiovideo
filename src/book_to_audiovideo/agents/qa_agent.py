@@ -33,6 +33,9 @@ class QAAgent(BaseAgent):
             warnings.append("Duration unavailable or invalid.")
 
         status = "pass" if not warnings else "warning"
+        for warning in warnings:
+            if warning not in context.state.warnings:
+                context.state.warnings.append(warning)
 
         self.write_stage_json(
             context,

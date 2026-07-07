@@ -12,7 +12,7 @@ class ChunkingAgent(BaseAgent):
         self.text_service = text_service
 
     async def execute(self, context: PipelineContext) -> None:
-        if context.state.chunks:
+        if self._has_valid_cached_chunks(context):
             return
         context.state.chunks = self.text_service.split_into_chunks(context.state.cleaned_text)
         self.write_stage_json(
@@ -20,3 +20,10 @@ class ChunkingAgent(BaseAgent):
             "03_chunks.json",
             {"chunks": [chunk.model_dump(mode="json") for chunk in context.state.chunks]},
         )
+
+    @staticmethod
+    def _has_valid_cached_chunks(context: PipelineContext) -> bool:
+        if not context.state.chunks:
+            return False
+        reconstructed = "\n\n".join(chunk.text.strip() for chunk in context.state.chunks if chunk.text.strip())
+        return reconstructed == context.state.cleaned_text.strip()
