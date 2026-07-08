@@ -192,6 +192,8 @@ Ogni job crea `data/output/<job_id>/` con:
 | Voce | La scelta dipende dalle voci disponibili nel tuo account ElevenLabs |
 | Dashboard | Solo upload, monitoraggio, approve/reject e apertura output finale |
 
+---
+
 ## ➡️ Implementazioni future
 
 - Possibilità di dare un prompt direttamente in dashboard se l'agent ai si blocca per qualche motivo, cosi da non bloccare la pipeline e correggere al momento.
