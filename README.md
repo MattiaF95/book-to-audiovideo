@@ -1,37 +1,41 @@
-# 📚 Book to Audiovideo
+<h1 align="center">Book to Audiovideo</h1>
+
+<p align="center">
+  <img src="src/assets/img/text-to-audiovideo-copertina.png" alt="Book to Audiovideo copertina" width="1200">
+</p>
 
 Pipeline locale MVP-first per trasformare un libro in un video narrato usando solo provider API esterni: Groq via API OpenAI-compatible per analisi testo, ElevenLabs per TTS, Pixabay per video e FFmpeg per il compositing finale.
 
-| Area | Scelta | Ruolo |
-|---|---|---|
-| 🧠 LLM | `qwen/qwen3.6-27b` via Groq API OpenAI-compatible | Cleanup testo, analisi narrativa, casting voci, pronuncia, prosodia e media planning in pass separati |
-| 🔊 TTS | ElevenLabs | Sintesi vocale per i segmenti narrati e dialogati |
-| 🎬 Media | Pixabay | Video di sfondo |
-| 🎞️ Compositing | FFmpeg | Mix audio, loop video, export finale |
+| Componente | Scelta |
+|---|---|
+| 🧠 LLM | `qwen/qwen3.6-27b` via Groq API OpenAI-compatible |
+| 🔊 TTS | ElevenLabs |
+| 🎬 Media | Pixabay |
+| 🎞️ Compositing | FFmpeg |
 
 ---
 
 ## 🤖 Pipeline / AI Agent
 
-| # | Fase | Agente | Usa LLM | Input principale | Output prodotto |
-|---|---|---|---|---|---|
-| 1 | 📥 Ingestion | `IngestionAgent` | No | File sorgente su disco | Testo grezzo in `state` |
-| 2 | ✨ Text cleanup | `TextCleanupAgent` | Sì | Testo grezzo | Testo corretto, lista correzioni |
-| 3 | 🧭 Narrative context | `NarrativeContextAgent` | Sì | Testo corretto | Scena, tono, ambientazione globale |
-| 4 | ✂️ Dialogue segmentation | `DialogueSegmentationAgent` | **No** | Testo corretto | Lista segmenti `narration`/`dialogue` con offset — **divisione deterministica via regex su `«»`** |
-| 5 | 👥 Speaker registry | `SpeakerRegistryAgent` | Sì | Testo corretto + context | Registro stabile di narratore e personaggi con `speaker_id` e `continuity_key` |
-| 6 | 🗣️ Speaker attribution | `SpeakerAttributionAgent` | Sì | Segmenti + registry | Ogni segmento associato a un `speaker_id`; dialoghi non attribuibili → `null` + warning |
-| 7 | 🏷️ Narrative annotation | `NarrativeAnnotationAgent` | Sì | Segmenti attribuiti | `emotion_hint` e `importance_score` per ogni segmento |
-| 8 | 🎙️ Voice casting | `VoiceCastingAgent` | Sì | Registry + voci ElevenLabs disponibili | Voce stabile per ogni speaker con `delivery_style` e `tts_prompt_tags` |
-| 9 | 🔤 Pronunciation planning | `PronunciationPlanningAgent` | Sì | Segmenti | Override di testo e hint fonetici IPA per termini a rischio |
-| 10 | 🎚️ Prosody planning | `ProsodyPlanningAgent` | Sì | Segmenti + annotazioni | Tag SSML inline (`<emphasis>`, `<break>`, `<prosody>`) per ogni segmento |
-| 11 | 🎞️ Media planning | `MediaPlanningAgent` | Sì | Segmenti + annotazioni | Keyword video, mood e intensità per ogni segmento |
-| 12 | 🎥 Media fetch | `MediaFetchAgent` | No | Piano media | Video Pixabay scaricati localmente |
-| 13 | 🔊 TTS | `TTSAgent` | No | Segmenti + voice casting + prosody + pronunciation | File audio `.mp3` per ogni segmento via ElevenLabs |
-| 14 | 🎚️ Mix | `AudioMixAgent` | No | Audio TTS + SFX | Mix voce + tracce secondarie per ogni segmento |
-| 15 | 🎬 Video | `VideoComposeAgent` | No | Mix audio + video Pixabay | Video finale `.mp4` |
-| 16 | 🧪 QA | `QAAgent` | No | Video finale | Report loudness, durata, coerenza tecnica |
-| 17 | 📦 Manifest | `ManifestAgent` | No | Intero `state` | `manifest.json` riepilogativo del job |
+| # | Stage | Usa LLM | Input principale | Output prodotto |
+|---|---|---|---|---|
+| 1 | 📥 Ingestion (`IngestionAgent`) | No | File sorgente su disco | Testo grezzo in `state` |
+| 2 | ✨ Text cleanup (`TextCleanupAgent`) | Sì | Testo grezzo | Testo corretto, lista correzioni |
+| 3 | 🧭 Narrative context (`NarrativeContextAgent`) | Sì | Testo corretto | Scena, tono, ambientazione globale |
+| 4 | ✂️ Dialogue segmentation (`DialogueSegmentationAgent`) | **No** | Testo corretto | Lista segmenti `narration`/`dialogue` con offset — **divisione deterministica via regex su `«»`** |
+| 5 | 👥 Speaker registry (`SpeakerRegistryAgent`) | Sì | Testo corretto + context | Registro stabile di narratore e personaggi con `speaker_id` e `continuity_key` |
+| 6 | 🗣️ Speaker attribution (`SpeakerAttributionAgent`) | Sì | Segmenti + registry | Ogni segmento associato a un `speaker_id`; dialoghi non attribuibili → `null` + warning |
+| 7 | 🏷️ Narrative annotation (`NarrativeAnnotationAgent`) | Sì | Segmenti attribuiti | `emotion_hint` e `importance_score` per ogni segmento |
+| 8 | 🎙️ Voice casting (`VoiceCastingAgent`) | Sì | Registry + voci ElevenLabs disponibili | Voce stabile per ogni speaker con `delivery_style` e `tts_prompt_tags` |
+| 9 | 🔤 Pronunciation planning (`PronunciationPlanningAgent`) | Sì | Segmenti | Override di testo e hint fonetici IPA per termini a rischio |
+| 10 | 🎚️ Prosody planning (`ProsodyPlanningAgent`) | Sì | Segmenti + annotazioni | Tag SSML inline (`<emphasis>`, `<break>`, `<prosody>`) per ogni segmento |
+| 11 | 🎞️ Media planning (`MediaPlanningAgent`) | Sì | Segmenti + annotazioni | Keyword video, mood e intensità per ogni segmento |
+| 12 | 🎥 Media fetch (`MediaFetchAgent`) | No | Piano media | Video Pixabay scaricati localmente |
+| 13 | 🔊 TTS (`TTSAgent`) | No | Segmenti + voice casting + prosody + pronunciation | File audio `.mp3` per ogni segmento via ElevenLabs |
+| 14 | 🎚️ Mix (`AudioMixAgent`) | No | Audio TTS + SFX | Mix voce + tracce secondarie per ogni segmento |
+| 15 | 🎬 Video (`VideoComposeAgent`) | No | Mix audio + video Pixabay | Video finale `.mp4` |
+| 16 | 🧪 QA (`QAAgent`) | No | Video finale | Report loudness, durata, coerenza tecnica |
+| 17 | 📦 Manifest (`ManifestAgent`) | No | Intero `state` | `manifest.json` riepilogativo del job |
 
 > **Step 4 — nessuna chiamata LLM.** La segmentazione dialogo/narrazione è deterministica: il codice Python spezza il testo su ogni `«` e `»`, garantendo confini esatti senza possibilità di errore del modello.
 
@@ -162,6 +166,19 @@ Ogni job crea `data/output/<job_id>/` con:
 | `mix/` | Mix audio voce per segmento |
 | `final/<book_id>.mp4` | Video finale |
 | `manifest.json` | Riepilogo completo del job |
+
+---
+
+## Motivazioni progetto
+
+L'idea del progetto è nata da alcuni primi test con LLM-TTS. Allora perchè non ideare un workflow di agenti ai (in alcuni casi anche solo codice python) che prendono un testo con narratore e vari personaggi, lo spacchettano, definiscono i ruoli con genere e voce, li assegnano e restituiscono un audio narrato con tanto di video come sfondo?
+
+
+**<h3>Tempi di realizzazione comprensivi di test per raffinare la pipeline ed i prompt: 2/3 giorni</h3>**
+
+
+E' stata un'idea per smanettare un po' con i vari modelli AI e capire che a volte tutto dipende da divisione compiti, orchestrazione e prompt brevi ma mirati. I primi test avevano pochi agenti rispetto al codice attuale, quindi il modello ai non dava risultati perchè doveva svolgere troppi compiti. Fino ad arrivare al modello attuale dove addirittura ho deciso di togliere la segmentazione del testo all'agente ai e di farlo manualmente con codice python.
+Nel progetto ho inserito anche alcuni **AGENTS.md** per dare contesto, ruolo e descrizione per chi usa **CODEX** ma usabile anche da altri agenti con opportune modifiche.
 
 ---
 
