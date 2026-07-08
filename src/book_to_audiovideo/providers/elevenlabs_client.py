@@ -17,7 +17,7 @@ class ElevenLabsClient(TTSProvider):
         self.settings = settings
         self.base_url = "https://api.elevenlabs.io/v1"
         self.model_fallbacks = [settings.default_tts_model, "eleven_turbo_v2_5", "eleven_multilingual_v2"]
-        self.stitching_models = {"eleven_turbo_v2_5", "eleven_multilingual_v2"}
+        self.stitching_models = {"eleven_v3", "eleven_turbo_v2_5", "eleven_multilingual_v2"}
 
     def _headers(self) -> dict[str, str]:
         return {
@@ -30,7 +30,7 @@ class ElevenLabsClient(TTSProvider):
         return (values or [])[-3:]
 
     def _supports_stitching(self, model_id: str) -> bool:
-        return model_id in self.stitching_models and model_id != "eleven_v3"
+        return model_id in self.stitching_models
 
     @staticmethod
     def _response_history_item_id(response: httpx.Response) -> str | None:

@@ -35,7 +35,7 @@ Pipeline locale MVP-first per trasformare un libro in un video narrato usando so
 
 > **Step 4 — nessuna chiamata LLM.** La segmentazione dialogo/narrazione è deterministica: il codice Python spezza il testo su ogni `«` e `»`, garantendo confini esatti senza possibilità di errore del modello.
 
-> Sono stati fatti vari tentativi con svariati modelli tra cui llama-3.1-8b-instant, llama-3.3-70b-versatile e quello attuale qwen/qwen3.6-27b. Tutte e tre i modelli non riescono sempre a dividere la narrazione dal dialogo, nonostante prompt precisi (anche qui ho provato diversi prompt, dai più "liberi" ai più "dettagliati". Ad esempio specificando che il testo dentro le parentesi << dialogo >> è da considerare dialogo) i modelli sbagliavano divisione, unendo segmente di testo (dialogo + narrazione) perchè nella "stessa frase". Per questo, per fare un primo test di funzionamento ho deciso di dare al modelli LLM il testo in ingresso già segmentato. 
+> In una fase iniziale sono stati provati modelli diversi, tra cui llama-3.1-8b-instant, llama-3.3-70b-versatile e qwen/qwen3.6-27b, ma la separazione dialogo/narrazione risultava troppo instabile. Per questo lo stato attuale usa una segmentazione deterministica in codice, con confini espliciti su `« »`, invece di affidarsi al modello.
 
 > **Stage 6 — fallback sicuro.** La narrazione viene sempre assegnata al narratore. I dialoghi non attribuibili (nessun verbo di dire adiacente, alternanza ambigua) ricevono `resolved_speaker_id: null` e generano un `warning` nello state invece di essere silenziosamente assegnati al narratore.
 
@@ -173,11 +173,11 @@ Ogni job crea `data/output/<job_id>/` con:
 - Groq usa lo SDK ufficiale con Chat Completions in streaming e forza output JSON con `response_format`.
 - Le chiamate Groq sono serializzate con un rate limiter globale (`LLM_MIN_INTERVAL_SECONDS`) tra richieste consecutive.
 - Il flusso LLM è separato in passaggi piccoli a compito singolo per ridurre errori di validazione JSON e problemi di coreference.
-- La segmentazione dialogo/narrazione è deterministica (regex su `<< >>`) e non consuma token Groq.
+- La segmentazione dialogo/narrazione è deterministica (regex su `« »`) e non consuma token Groq.
 - Il narratore è uno speaker unico e stabile per tutto il progetto.
 - Ogni speaker ricorrente mantiene `speaker_id` e `continuity_anchor` stabili, riusati da ElevenLabs per la continuità vocale tra segmenti.
-- ElevenLabs request stitching è usato solo con modelli compatibili; non viene usato con `eleven_v3`.
-- Il contesto di stitching mantiene una coda fissa di massimo 3 elementi (`request_id` + `history_item_id`).
+- ElevenLabs request stitching (serve per dare contesto al modello su segmenti separati) è usato con il modello attivo `eleven_v3` e anche con `eleven_turbo_v2_5` / `eleven_multilingual_v2`; il client invia `previous_request_ids` e `previous_history_item_ids` quando il modello lo supporta.
+- Il contesto di stitching mantiene una coda fissa di massimo 3 elementi (`request_id` + `history_item_id`) per evitare che la storia cresca oltre la finestra utile.
 - Il QA finale non blocca il job: scrive `warning` se loudness o durata non rientrano nei valori attesi. ⚠️
 
 ---
@@ -187,7 +187,7 @@ Ogni job crea `data/output/<job_id>/` con:
 | Limite | Dettaglio |
 |---|---|
 | Test | Offline e mock, non API reali |
-| Delimitatori dialogo | Solo `<<>>` supportati; testi con `—` o `"` usano il prompt di fallback |
+| Delimitatori dialogo | Solo `« »` supportati; testi con `—` o `"` usano il prompt di fallback |
 | Pixabay | Solo ricerca video; scaricato nella variante `medium` quando disponibile |
 | Voce | La scelta dipende dalle voci disponibili nel tuo account ElevenLabs |
 | Dashboard | Solo upload, monitoraggio, approve/reject e apertura output finale |

@@ -33,7 +33,7 @@ class _FakeClient:
         return _FakeResponse(200)
 
 
-def test_synthesize_avoids_stitching_for_eleven_v3(monkeypatch, tmp_path: Path) -> None:
+def test_synthesize_uses_stitching_for_eleven_v3(monkeypatch, tmp_path: Path) -> None:
     captured_bodies: list[dict] = []
     prompts_dir = tmp_path / "prompts"
     prompts_dir.mkdir()
@@ -65,10 +65,10 @@ def test_synthesize_avoids_stitching_for_eleven_v3(monkeypatch, tmp_path: Path) 
     )
 
     assert captured_bodies[0]["model_id"] == "eleven_v3"
-    assert "previous_request_ids" not in captured_bodies[0]
-    assert "previous_history_item_ids" not in captured_bodies[0]
-    assert captured_bodies[0]["previous_text"] == "prima"
-    assert captured_bodies[0]["next_text"] == "dopo"
+    assert captured_bodies[0]["previous_request_ids"] == ["r2", "r3", "r4"]
+    assert captured_bodies[0]["previous_history_item_ids"] == ["h2", "h3", "h4"]
+    assert "previous_text" not in captured_bodies[0]
+    assert "next_text" not in captured_bodies[0]
     assert result.request_id == "req-1"
     assert result.history_item_id == "hist-1"
 
