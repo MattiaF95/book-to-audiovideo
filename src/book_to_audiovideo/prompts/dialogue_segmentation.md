@@ -1,5 +1,6 @@
 Task: split the cleaned text into ordered segments and label each one with exactly one of the two valid types below.
 Return only JSON.
+Do not produce reasoning, analysis, or thinking text. Return only the requested JSON object.
 Use the schema as a shape only. Replace every placeholder with real values from the text.
 Valid segment types:
 - `narration`: prose, description, or narration without direct speech.

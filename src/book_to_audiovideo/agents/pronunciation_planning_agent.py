@@ -22,10 +22,15 @@ class PronunciationPlanningAgent(BaseAgent):
                 "speakers": [speaker.model_dump(mode="json") for speaker in context.state.speakers],
             },
         )
-        by_segment = {
-            item.segment_id: item
-            for item in [PronunciationHint.model_validate(item) for item in response.get("pronunciation", [])]
-        }
+        by_segment = {}
+        for item in response.get("pronunciation", []):
+            normalized = dict(item)
+            normalized.setdefault("pronunciation_overrides", {})
+            normalized.setdefault("phonetic_hints", {})
+            normalized.setdefault("problem_terms", [])
+            normalized.setdefault("confidence", 0.0)
+            pronunciation = PronunciationHint.model_validate(normalized)
+            by_segment[pronunciation.segment_id] = pronunciation
         context.state.pronunciation_overrides = [
             by_segment.get(
                 segment.segment_id,

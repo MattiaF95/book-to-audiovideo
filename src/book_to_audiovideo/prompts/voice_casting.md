@@ -1,5 +1,6 @@
 Task: choose one stable voice assignment for each speaker using only the provided available voices.
 Return only JSON:
+Do not produce reasoning, analysis, or thinking text. Return only the requested JSON object.
 Use the voice list as given. Keep narrator and recurring characters stable across the whole project.
 {
   "voice_assignments": [

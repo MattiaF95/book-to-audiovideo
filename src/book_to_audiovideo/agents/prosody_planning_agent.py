@@ -23,7 +23,16 @@ class ProsodyPlanningAgent(BaseAgent):
                 "speakers": [speaker.model_dump(mode="json") for speaker in context.state.speakers],
             },
         )
-        by_segment = {item.segment_id: item for item in [ToneTag.model_validate(item) for item in response.get("tone_tags", [])]}
+        segment_text_by_id = {segment.segment_id: segment.raw_text for segment in context.state.segments}
+        by_segment = {}
+        for item in response.get("tone_tags", []):
+            normalized = dict(item)
+            segment_id = str(normalized.get("segment_id", "")).strip()
+            normalized.setdefault("tagged_text", segment_text_by_id.get(segment_id, ""))
+            normalized.setdefault("tags_used", [])
+            normalized.setdefault("tag_confidence", 0.0)
+            tone_tag = ToneTag.model_validate(normalized)
+            by_segment[tone_tag.segment_id] = tone_tag
         context.state.tone_tags = [
             by_segment.get(
                 segment.segment_id,

@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 import math
+import re
 import time
 from collections import deque
 from datetime import datetime, timezone
@@ -81,6 +82,14 @@ class GroqClient(LLMProvider):
             if retry_at.tzinfo is None:
                 retry_at = retry_at.replace(tzinfo=timezone.utc)
             return max(0.0, (retry_at - datetime.now(timezone.utc)).total_seconds())
+
+    def _reasoning_parameters(self, prompt_name: str) -> dict[str, Any]:
+        if prompt_name == "narrative_context.md":
+            return {
+                "reasoning_effort": "default",
+                "reasoning_format": "parsed",
+            }
+        return {"reasoning_effort": "none"}
 
     def _compact_payload(self, prompt_name: str, payload: dict[str, Any]) -> dict[str, Any]:
         if prompt_name == "text_cleanup.md":
@@ -243,7 +252,7 @@ class GroqClient(LLMProvider):
 
     def _create_body(self, prompt: str, payload_text: str, prompt_name: str) -> dict[str, Any]:
         max_tokens = min(4096, max(256, self._budget_for(prompt_name)))
-        return {
+        body = {
             "model": self.settings.default_llm_model,
             "messages": [
                 {
@@ -255,7 +264,10 @@ class GroqClient(LLMProvider):
             "max_completion_tokens": max_tokens,
             "top_p": 0.95,
             "stream": False,
+            "response_format": {"type": "json_object"},
         }
+        body.update(self._reasoning_parameters(prompt_name))
+        return body
 
     def _extract_completion_text(self, completion: Any) -> str:
         choices = getattr(completion, "choices", None) or []
@@ -279,6 +291,9 @@ class GroqClient(LLMProvider):
     def _extract_json_object(self, text: str) -> dict[str, Any]:
         decoder = json.JSONDecoder()
         stripped = text.lstrip()
+        stripped = re.sub(r"(?is)<think>.*?</think>", "\n", stripped).strip()
+        stripped = re.sub(r"(?is)```(?:json)?\s*", "", stripped)
+        stripped = re.sub(r"(?is)\s*```", "", stripped).strip()
         start = stripped.find("{")
         if start < 0:
             raise json.JSONDecodeError("No JSON object found", text, 0)
@@ -294,11 +309,11 @@ class GroqClient(LLMProvider):
             if not isinstance(value, str) or not value.strip() or value.strip().lower() == "string":
                 raise ProviderError(f"{prompt_name} ha restituito {field} vuoto o non valido")
 
-        def require_list(field: str, expected_len: int | None = None) -> list[Any]:
+        def require_list(field: str, expected_len: int | None = None, allow_empty: bool = False) -> list[Any]:
             value = response.get(field)
             if not isinstance(value, list):
                 raise ProviderError(f"{prompt_name} ha restituito {field} non valido")
-            if not value:
+            if not value and not allow_empty:
                 raise ProviderError(f"{prompt_name} ha restituito {field} vuoto")
             if expected_len is not None and len(value) != expected_len:
                 raise ProviderError(
@@ -312,6 +327,16 @@ class GroqClient(LLMProvider):
             context = response.get("context")
             if not isinstance(context, dict) or not context:
                 raise ProviderError("narrative_context.md ha restituito context vuoto o non valido")
+            for field in ("scene", "tone", "setting", "time_period"):
+                if field not in context:
+                    raise ProviderError(f"narrative_context.md ha restituito {field} mancante")
+                value = context.get(field)
+                if field == "time_period" and value is None:
+                    continue
+                if not isinstance(value, str) or not value.strip():
+                    raise ProviderError(f"narrative_context.md ha restituito {field} non valido")
+                if value.strip().lower() in {"string", "string or null", "null"}:
+                    raise ProviderError(f"narrative_context.md ha restituito {field} placeholder non valido")
             return
         if prompt_name == "dialogue_segmentation.md":
             segments = require_list("segments")
@@ -339,32 +364,34 @@ class GroqClient(LLMProvider):
                 if item.get("role") not in {"narrator", "character"}:
                     raise ProviderError("speaker_registry.md ha restituito role non valido")
                 gender = item.get("gender")
+                if isinstance(gender, str):
+                    normalized_gender = gender.strip().lower()
+                    if normalized_gender in {"neutral", "unknown", "unspecified", "null", ""}:
+                        item["gender"] = None
+                        continue
+                    if normalized_gender in {"male", "female"}:
+                        item["gender"] = normalized_gender
+                        continue
                 if gender not in {"male", "female", None}:
                     raise ProviderError("speaker_registry.md ha restituito gender non valido")
             return
         if prompt_name == "speaker_attribution.md":
-            expected_len = len(payload.get("segments", []))
-            require_list("assignments", expected_len=expected_len)
+            require_list("assignments", allow_empty=True)
             return
         if prompt_name == "narrative_annotation.md":
-            expected_len = len(payload.get("segments", []))
-            require_list("annotations", expected_len=expected_len)
+            require_list("annotations", allow_empty=True)
             return
         if prompt_name == "voice_casting.md":
-            expected_len = len(payload.get("speakers", []))
-            require_list("voice_assignments", expected_len=expected_len)
+            require_list("voice_assignments", allow_empty=True)
             return
         if prompt_name == "pronunciation_planning.md":
-            expected_len = len(payload.get("segments", []))
-            require_list("pronunciation", expected_len=expected_len)
+            require_list("pronunciation", allow_empty=True)
             return
         if prompt_name == "prosody_planning.md":
-            expected_len = len(payload.get("segments", []))
-            require_list("tone_tags", expected_len=expected_len)
+            require_list("tone_tags", allow_empty=True)
             return
         if prompt_name == "media_planning.md":
-            expected_len = len(payload.get("segments", []))
-            require_list("media_plan", expected_len=expected_len)
+            require_list("media_plan", allow_empty=True)
             return
 
     async def _http_completion_text(self, body: dict[str, Any]) -> str:

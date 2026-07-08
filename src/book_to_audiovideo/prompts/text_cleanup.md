@@ -1,5 +1,6 @@
 Task: minimally clean the input text.
 Return only JSON.
+Do not produce reasoning, analysis, or thinking text. Return only the requested JSON object.
 Do not add explanations.
 The schema below is illustrative only: replace placeholder values with the real cleaned content.
 

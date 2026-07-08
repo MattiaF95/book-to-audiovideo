@@ -78,7 +78,7 @@ Avvio:
 ```bash
 python3 -m venv .venv
 . .venv/bin/activate
-pip install -e ".[dev]"
+pip install -r requirements.txt
 cp .env.example .env
 python -m book_to_audiovideo.main serve
 ```

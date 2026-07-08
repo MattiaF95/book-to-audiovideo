@@ -28,7 +28,7 @@ class SpeakerRegistryAgent(BaseAgent):
         for item in response.get("speakers", []):
             speaker = Speaker.model_validate(item)
             speakers[speaker.speaker_id] = speaker
-        if "narrator" not in speakers:
+        if not any(speaker.role == "narrator" for speaker in speakers.values()):
             speakers["narrator"] = Speaker(
                 speaker_id="narrator",
                 name="Narrator",

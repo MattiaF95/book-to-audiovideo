@@ -1,5 +1,6 @@
 Task: assign each existing segment to one speaker from the provided speaker registry.
 Return only JSON:
+Do not produce reasoning, analysis, or thinking text. Return only the requested JSON object.
 Use the provided speaker registry only. Reuse the same speaker_id for the same character across all matching segments.
 {
   "assignments": [

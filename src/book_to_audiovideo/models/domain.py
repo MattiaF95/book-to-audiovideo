@@ -63,24 +63,24 @@ class PronunciationHint(BaseModel):
     pronunciation_overrides: dict[str, str] = Field(default_factory=dict)
     phonetic_hints: dict[str, str] = Field(default_factory=dict)
     problem_terms: list[str] = Field(default_factory=list)
-    confidence: float = Field(ge=0.0, le=1.0)
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
 
 
 class ToneTag(BaseModel):
     segment_id: str
     tagged_text: str
     tags_used: list[str] = Field(default_factory=list)
-    tag_confidence: float = Field(ge=0.0, le=1.0)
+    tag_confidence: float = Field(default=0.0, ge=0.0, le=1.0)
 
 
 class MediaPlanItem(BaseModel):
     segment_id: str
     video_keywords: list[str] = Field(default_factory=list)
     sfx_keywords: list[str] = Field(default_factory=list)
-    mood: str
-    scene_type: str
-    media_intensity: str
-    needs_sfx: bool
+    mood: str = "neutral"
+    scene_type: str = "generic"
+    media_intensity: str = "low"
+    needs_sfx: bool = False
     sfx_timeline_hint: str | None = None
 
 

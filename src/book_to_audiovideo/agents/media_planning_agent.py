@@ -22,7 +22,18 @@ class MediaPlanningAgent(BaseAgent):
                 "segments": [segment.model_dump(mode="json") for segment in context.state.segments],
             },
         )
-        by_segment = {item.segment_id: item for item in [MediaPlanItem.model_validate(item) for item in response.get("media_plan", [])]}
+        by_segment = {}
+        default_tone = str(context.state.text_context.get("tone") or "neutral")
+        for item in response.get("media_plan", []):
+            normalized = dict(item)
+            normalized.setdefault("video_keywords", [])
+            normalized.setdefault("sfx_keywords", [])
+            normalized.setdefault("mood", default_tone)
+            normalized.setdefault("scene_type", "generic")
+            normalized.setdefault("media_intensity", "low")
+            normalized.setdefault("needs_sfx", False)
+            media_plan_item = MediaPlanItem.model_validate(normalized)
+            by_segment[media_plan_item.segment_id] = media_plan_item
         fallback_keywords = context.state.text_context.get("scene")
         default_query = [str(fallback_keywords).strip()] if fallback_keywords else ["cinematic background"]
         context.state.media_plan = [

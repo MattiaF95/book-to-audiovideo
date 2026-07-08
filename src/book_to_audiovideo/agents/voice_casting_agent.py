@@ -50,20 +50,31 @@ class VoiceCastingAgent(BaseAgent):
 
         candidate_by_id = {voice.get("voice_id"): voice for voice in candidate_pool if voice.get("voice_id")}
         candidate_by_name = {voice.get("name"): voice for voice in candidate_pool if voice.get("name")}
+        by_speaker_id = {str(item.get("speaker_id")): item for item in response.get("voice_assignments", []) if item.get("speaker_id")}
         assignments: list[VoiceAssignment] = []
-        for item in response.get("voice_assignments", []):
-            enriched_item = dict(item)
+        for speaker in context.state.speakers:
+            item = dict(by_speaker_id.get(speaker.speaker_id, {}))
+            if not item:
+                item = {
+                    "speaker_id": speaker.speaker_id,
+                    "voice_name": speaker.name,
+                }
+            item.setdefault("speaker_id", speaker.speaker_id)
+            item.setdefault("voice_name", speaker.name)
             selected = None
-            if enriched_item.get("voice_id"):
-                selected = candidate_by_id.get(enriched_item["voice_id"])
-            if not selected and enriched_item.get("voice_name"):
-                selected = candidate_by_name.get(enriched_item["voice_name"])
+            if item.get("voice_id"):
+                selected = candidate_by_id.get(item["voice_id"])
+            if not selected and item.get("voice_name"):
+                selected = candidate_by_name.get(item["voice_name"])
             if not selected and candidate_pool:
-                selected = candidate_pool[0]
+                selected = max(
+                    candidate_pool,
+                    key=lambda voice: self._voice_match_score(speaker, voice),
+                )
             if selected:
-                enriched_item["voice_name"] = selected.get("name", enriched_item.get("voice_name"))
-                enriched_item["voice_id"] = selected.get("voice_id", enriched_item.get("voice_id"))
-            assignments.append(await self.tts.select_voice(enriched_item))
+                item["voice_name"] = selected.get("name", item.get("voice_name"))
+                item["voice_id"] = selected.get("voice_id", item.get("voice_id"))
+            assignments.append(await self.tts.select_voice(item))
         context.state.voice_assignments = assignments
         self.write_stage_json(
             context,
