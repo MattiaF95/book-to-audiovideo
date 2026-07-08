@@ -25,7 +25,7 @@ Pipeline locale MVP-first per trasformare un libro in un video narrato usando so
 | 8 | 🎙️ Voice casting | `VoiceCastingAgent` | Sì | Registry + voci ElevenLabs disponibili | Voce stabile per ogni speaker con `delivery_style` e `tts_prompt_tags` |
 | 9 | 🔤 Pronunciation planning | `PronunciationPlanningAgent` | Sì | Segmenti | Override di testo e hint fonetici IPA per termini a rischio |
 | 10 | 🎚️ Prosody planning | `ProsodyPlanningAgent` | Sì | Segmenti + annotazioni | Tag SSML inline (`<emphasis>`, `<break>`, `<prosody>`) per ogni segmento |
-| 11 | 🎞️ Media planning | `MediaPlanningAgent` | Sì | Segmenti + annotazioni | Keyword video/SFX, mood e intensità per ogni segmento |
+| 11 | 🎞️ Media planning | `MediaPlanningAgent` | Sì | Segmenti + annotazioni | Keyword video, mood e intensità per ogni segmento |
 | 12 | 🎥 Media fetch | `MediaFetchAgent` | No | Piano media | Video Pixabay scaricati localmente |
 | 13 | 🔊 TTS | `TTSAgent` | No | Segmenti + voice casting + prosody + pronunciation | File audio `.mp3` per ogni segmento via ElevenLabs |
 | 14 | 🎚️ Mix | `AudioMixAgent` | No | Audio TTS + SFX | Mix voce + tracce secondarie per ogni segmento |
@@ -159,7 +159,7 @@ Ogni job crea `data/output/<job_id>/` con:
 | `source/` | File sorgente e normalizzazioni |
 | `media/video/` | Video selezionati da Pixabay |
 | `tts/` | File audio generati da ElevenLabs |
-| `mix/` | Mix audio voce + SFX per segmento |
+| `mix/` | Mix audio voce per segmento |
 | `final/<book_id>.mp4` | Video finale |
 | `manifest.json` | Riepilogo completo del job |
 
