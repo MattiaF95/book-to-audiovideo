@@ -28,10 +28,19 @@ class SpeakerAttributionAgent(BaseAgent):
             item = by_segment.get(segment.segment_id, {})
             if item.get("speaker_hint") is not None:
                 segment.speaker_hint = item.get("speaker_hint")
-            segment.resolved_speaker_id = (
-                item.get("resolved_speaker_id")
-                or ("narrator" if segment.segment_type.value == "narration" else segment.speaker_hint or "narrator")
-            )
+            resolved = item.get("resolved_speaker_id")
+            if resolved:
+                segment.resolved_speaker_id = resolved
+            elif segment.segment_type.value == "narration":
+                segment.resolved_speaker_id = next(
+                    (s.speaker_id for s in context.state.speakers if s.role == "narrator"),
+                    "narrator",
+                )
+            else:
+                segment.resolved_speaker_id = None
+                context.state.warnings.append(
+                    f"speaker_attribution: segmento {segment.segment_id} non attribuito"
+                )
         self.write_stage_json(
             context,
             "06_speaker_attribution.json",
