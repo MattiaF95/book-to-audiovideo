@@ -19,6 +19,7 @@ class VoiceCastingAgent(BaseAgent):
         if context.state.voice_assignments:
             return
         available_voices = await self.tts.list_voices()
+        # Preferisce prima le voci dell'account, poi amplia alle shared se serve copertura.
         account_pool = self._build_voice_pool(context.state.speakers, available_voices, source="account")
         candidate_pool = account_pool
         if not self._pool_is_sufficient(context.state.speakers, account_pool):
@@ -124,6 +125,7 @@ class VoiceCastingAgent(BaseAgent):
                 if kept >= 3:
                     break
         if not ranked_voice_ids:
+            # Fallback finale: tieni un piccolo pool anche senza match forti.
             ranked_voice_ids = [
                 str(voice.get("voice_id"))
                 for voice in voices
@@ -164,6 +166,7 @@ class VoiceCastingAgent(BaseAgent):
     def _voice_match_score(speaker, voice: dict) -> int:
         labels = voice.get("labels", {}) or {}
         score = 1
+        # Il punteggio combina ruolo, genere e vincoli testuali del parlante.
         speaker_gender = (speaker.gender or "").lower()
         voice_gender = str(labels.get("gender", "")).lower()
         if speaker_gender and voice_gender:

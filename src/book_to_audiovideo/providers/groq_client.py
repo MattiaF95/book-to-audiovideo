@@ -92,6 +92,7 @@ class GroqClient(LLMProvider):
         return {"reasoning_effort": "none"}
 
     def _compact_payload(self, prompt_name: str, payload: dict[str, Any]) -> dict[str, Any]:
+        # Riduce il payload al minimo necessario per contenere token e contesto.
         if prompt_name == "text_cleanup.md":
             return {"text": payload.get("text", "")}
         if prompt_name == "narrative_context.md":
@@ -180,6 +181,7 @@ class GroqClient(LLMProvider):
         return compact
 
     def _truncate_value(self, value: Any, max_chars: int) -> Any:
+        # Troncamento conservativo per evitare payload troppo grandi.
         if max_chars <= 0:
             return value
         if isinstance(value, str):
@@ -236,6 +238,7 @@ class GroqClient(LLMProvider):
         return max(0.0, 60.0 - (now - oldest))
 
     async def _wait_for_global_limits(self, reserved_tokens: int) -> None:
+        # Coordinamento globale per rispettare rate limit e spacing tra richieste.
         while True:
             async with self.__class__._global_rate_lock:
                 now = time.monotonic()

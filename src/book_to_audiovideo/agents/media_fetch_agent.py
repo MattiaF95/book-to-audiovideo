@@ -24,6 +24,7 @@ class MediaFetchAgent(BaseAgent):
         media_dir = Path(context.state.artifact_dir) / "media"
         first_item = self._select_media_plan_item(context)
         video_error: str | None = None
+        # Prova query via fallback fino a trovare un video scaricabile.
         for query in self.media_service.build_fallback_queries(first_item):
             try:
                 hits = await self.media_provider.search_videos(query)
@@ -60,6 +61,7 @@ class MediaFetchAgent(BaseAgent):
         scene = str(context.state.text_context.get("scene") or "").strip()
         tone = str(context.state.text_context.get("tone") or "").strip()
         setting = str(context.state.text_context.get("setting") or "").strip()
+        # Se manca un media plan, deriva keyword minime dal contesto narrativo.
         fallback_keywords = [value for value in [scene, setting, tone] if value]
         if not fallback_keywords:
             fallback_keywords = ["cinematic background"]

@@ -147,6 +147,7 @@ class PipelineOrchestrator:
                 await agent.run(context)
                 self._append_event(state, agent.stage_name, "completed", f"Stage completato: {agent.stage_name}")
                 self.job_store.save(state)
+                # Uno stage può fermare il flusso chiedendo approval esplicita dalla dashboard.
                 if state.status == JobStatus.needs_attention:
                     raise ApprovalRequiredError(state.attention_request.reason if state.attention_request else "Approval richiesta")
             state.status = JobStatus.completed
