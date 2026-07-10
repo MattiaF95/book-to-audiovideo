@@ -26,6 +26,7 @@ class FFmpegService:
         duration_seconds: float,
     ) -> dict[str, object]:
         output_path.parent.mkdir(parents=True, exist_ok=True)
+        # Se c'è un effetto sonoro, lo loopiamo e lo mescoliamo con la voce; altrimenti si fa solo il loudness normalizer.
         if sfx_path:
             filter_complex = (
                 "[1:a]volume=0.18,aloop=loop=-1:size=2e+09,atrim=duration="
@@ -59,6 +60,7 @@ class FFmpegService:
 
     def compose_video(self, video_path: Path, audio_path: Path, output_path: Path) -> dict[str, object]:
         output_path.parent.mkdir(parents=True, exist_ok=True)
+        # Il video di sfondo viene ripetuto fino a coprire l'audio finale e poi viene esportato in MP4.
         command = [
             self.settings.ffmpeg_bin,
             "-y",
@@ -84,6 +86,7 @@ class FFmpegService:
         return {"command": self._run(command)}
 
     def verify_duration(self, media_path: Path) -> float:
+        # ffprobe restituisce la durata del file multimediale in secondi, usata dal QA finale.
         command = [
             self.settings.ffprobe_bin,
             "-v",
@@ -100,6 +103,7 @@ class FFmpegService:
         return float(json.loads(result.stdout)["format"]["duration"])
 
     def measure_loudness(self, media_path: Path) -> dict[str, float]:
+        # FFmpeg viene usato qui per estrarre il loudness rilevato e confrontarlo con i valori attesi.
         command = [
             self.settings.ffmpeg_bin,
             "-i",

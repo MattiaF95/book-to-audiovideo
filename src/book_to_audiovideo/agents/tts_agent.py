@@ -30,11 +30,12 @@ class TTSAgent(BaseAgent):
                 raise PipelineError(f"Voice assignment mancante per speaker {speaker_id}")
             assignment = voice_by_speaker[speaker_id]
             tone = tone_by_segment.get(segment.segment_id)
-            # Conserva solo il contesto immediato utile alla continuità TTS.
+            # Manteniamo solo il contesto recente del speaker per non far crescere troppo la storia di stitching.
             stitch_history = context.state.speaker_tts_history.setdefault(speaker_id, TTSStitchHistory())
             previous_request_ids = stitch_history.previous_request_ids[-3:]
             previous_history_item_ids = stitch_history.previous_history_item_ids[-3:]
             next_text = context.state.segments[index + 1].raw_text if index + 1 < len(context.state.segments) else None
+            # Se il tono ha già un testo annotato, lo usiamo; altrimenti il testo grezzo resta il fallback.
             tts_text = self._resolve_tts_text(segment.raw_text, tone.tagged_text if tone else None)
             response = await self.tts_provider.synthesize(
                 {

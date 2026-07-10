@@ -112,7 +112,7 @@ In alternativa puoi scaricarlo manualmente da qui https://www.ffmpeg.org/downloa
 | 11 | 🎞️ media_planning_agent.py | Sì | <ul><li>Definisce keyword video, mood, scena e intensità per ogni segmento.</li><li>Serve a scegliere i media più adatti al contenuto.</li></ul> |
 | 12 | 🎥 media_fetch_agent.py | No | <ul><li>Cerca e scarica i video di sfondo da Pixabay.</li><li>Prova più query fino a trovare un risultato utilizzabile.</li></ul> |
 | 13 | 🔊 tts_agent.py | No | <ul><li>Genera l’audio sintetizzato per ogni segmento.</li><li>Usa la voce assegnata e il contesto prosodico del segmento.</li></ul> |
-| 14 | 🎚️ audio_mix_agent.py | No | <ul><li>Mescola la voce TTS con eventuali effetti sonori o tracce secondarie.</li><li>Normalizza i livelli audio per il risultato finale.</li></ul> |
+| 14 | 🎚️ audio_mix_agent.py | No | <ul><li>Mescola la voce TTS con eventuali effetti sonori (logica esistente ma media_fetch fornisce solo tracce video) o tracce secondarie.</li><li>Normalizza i livelli audio per il risultato finale.</li></ul> |
 | 15 | 🎬 video_compose_agent.py | No | <ul><li>Compone il video finale unendo audio e media visivi.</li><li>Produce il file MP4 finale della pipeline.</li></ul> |
 | 16 | 🧪 qa_agent.py | No | <ul><li>QA (Quality Assurance)</li><li>Controlla durata e loudness del video finale.</li><li>Segnala warning se il risultato non rientra nei parametri attesi.</li></ul> |
 | 17 | 📦 manifest_agent.py | No | <ul><li>Scrive il manifest finale con lo stato completo del job.</li><li>Racchiude i risultati di tutte le fasi eseguite.</li></ul> |
@@ -124,7 +124,9 @@ In alternativa puoi scaricarlo manualmente da qui https://www.ffmpeg.org/downloa
 
 > In una fase iniziale sono stati provati modelli diversi, tra cui llama-3.1-8b-instant, llama-3.3-70b-versatile e qwen/qwen3.6-27b, ma la separazione dialogo/narrazione risultava troppo instabile.
 
-> **Stage 6 — fallback sicuro.** La narrazione viene sempre assegnata al narratore. I dialoghi non attribuibili (nessun verbo di dire adiacente, alternanza ambigua) ricevono `resolved_speaker_id: null` e generano un `warning` nello state invece di essere silenziosamente assegnati al narratore.
+> **Step 6 — fallback sicuro.** La narrazione viene sempre assegnata al narratore. I dialoghi non attribuibili (nessun verbo di dire adiacente, alternanza ambigua) ricevono `resolved_speaker_id: null` e generano un `warning` nello state invece di essere silenziosamente assegnati al narratore.
+
+> **Step 14 - mancanza effetti sonori.** All'inizio era previsto recuperare anche effetti sonori da Pixabay e quindi era stata inclusa la logica in audio_mix_agent, ma in fase di test mi sono accorto che Pixabay ha query solo per contenuti video. Logica lasciata perchè non produce regressioni o bug.
 
 ---
 
@@ -223,7 +225,7 @@ Ogni job crea `data/output/<job_id>/` con:
 |---|---|
 | Test | Offline e mock, non API reali |
 | Delimitatori dialogo | Solo `« »` supportati; testi con `—` o `"` usano il prompt di fallback |
-| Pixabay | Solo ricerca video; scaricato nella variante `medium` quando disponibile |
+| Pixabay | Solo ricerca video; scaricato nella variante `medium` quando disponibile. Nel codice è presente anche logica per gli effetti audio ma questo provider (nonostante abbia nel suo catalogo anche contenuti audio) fornisce solo video tramite le query |
 | Voce | La scelta dipende dalle voci disponibili nel tuo account ElevenLabs |
 | Dashboard | Solo upload, monitoraggio, approve/reject e apertura output finale |
 

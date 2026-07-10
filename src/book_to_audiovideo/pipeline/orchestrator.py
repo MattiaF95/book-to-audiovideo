@@ -92,6 +92,7 @@ class PipelineOrchestrator:
         self._running_tasks: dict[str, asyncio.Task[None]] = {}
 
     def _build_agents(self) -> list[object]:
+        # Sequenza fissa degli step: ogni agente riceve lo stesso contesto e aggiorna il job state.
         return [
             IngestionAgent(self.file_service),
             TextCleanupAgent(self.llm),
@@ -142,6 +143,7 @@ class PipelineOrchestrator:
             for agent in self._build_agents():
                 if state.stop_requested:
                     raise asyncio.CancelledError
+                # Ogni stage viene registrato come in esecuzione prima di chiamare l'agente.
                 self._append_event(state, agent.stage_name, "running", f"Stage avviato: {agent.stage_name}")
                 self.job_store.save(state)
                 await agent.run(context)

@@ -19,6 +19,7 @@ class FileService:
         return target
 
     def read_text(self, source_path: Path) -> str:
+        # Il file viene letto in base all'estensione: testo semplice, PDF o DOCX richiedono logiche diverse.
         extension = source_path.suffix.lower()
         if extension not in self.SUPPORTED_EXTENSIONS:
             raise PipelineError(f"Formato non supportato: {extension}")

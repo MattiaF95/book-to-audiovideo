@@ -19,7 +19,7 @@ class VoiceCastingAgent(BaseAgent):
         if context.state.voice_assignments:
             return
         available_voices = await self.tts.list_voices()
-        # Preferisce prima le voci dell'account, poi amplia alle shared se serve copertura.
+        # Iniziamo con le voci già presenti nell'account; se mancano coperture, si espande al catalogo shared.
         account_pool = self._build_voice_pool(context.state.speakers, available_voices, source="account")
         candidate_pool = account_pool
         if not self._pool_is_sufficient(context.state.speakers, account_pool):
@@ -51,6 +51,7 @@ class VoiceCastingAgent(BaseAgent):
 
         candidate_by_id = {voice.get("voice_id"): voice for voice in candidate_pool if voice.get("voice_id")}
         candidate_by_name = {voice.get("name"): voice for voice in candidate_pool if voice.get("name")}
+        # L'LLM restituisce le assegnazioni per speaker; qui le allineiamo ai speaker reali della pipeline.
         by_speaker_id = {str(item.get("speaker_id")): item for item in response.get("voice_assignments", []) if item.get("speaker_id")}
         assignments: list[VoiceAssignment] = []
         for speaker in context.state.speakers:
@@ -68,6 +69,7 @@ class VoiceCastingAgent(BaseAgent):
             if not selected and item.get("voice_name"):
                 selected = candidate_by_name.get(item["voice_name"])
             if not selected and candidate_pool:
+                # Se l'LLM non fornisce una voce valida, scegliamo il match più vicino tra le voci disponibili.
                 selected = max(
                     candidate_pool,
                     key=lambda voice: self._voice_match_score(speaker, voice),

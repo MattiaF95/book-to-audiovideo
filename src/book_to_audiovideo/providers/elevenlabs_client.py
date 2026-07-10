@@ -72,6 +72,7 @@ class ElevenLabsClient(TTSProvider):
         account_voices = await self.list_voices()
         target_name = (descriptor.get("voice_name") or "").strip()
         target_voice_id = descriptor.get("voice_id")
+        # Prima cerchiamo la voce nel profilo dell'account; se manca, la prendiamo dal catalogo condiviso.
         for voice in account_voices:
             if target_voice_id and voice.get("voice_id") == target_voice_id:
                 return target_voice_id
@@ -88,6 +89,7 @@ class ElevenLabsClient(TTSProvider):
                 break
         if not target:
             raise ProviderError(f"Voce pubblica non trovata: {target_name}")
+        # Se la voce è esterna, la aggiungiamo all'account prima di usarla per la sintesi.
         public_owner_id = target.get("public_owner_id") or target.get("user_id")
         public_voice_id = target.get("voice_id")
         if not public_owner_id or not public_voice_id:
@@ -135,6 +137,7 @@ class ElevenLabsClient(TTSProvider):
                 "voice_settings": {"stability": 0.45, "similarity_boost": 0.75},
             }
             if stitch_supported:
+                # I modelli che supportano lo stitching ricevono il contesto delle richieste precedenti.
                 body["previous_request_ids"] = previous_request_ids
                 body["previous_history_item_ids"] = previous_history_item_ids
             else:
