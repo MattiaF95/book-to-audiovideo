@@ -68,12 +68,35 @@ class JobStore:
         write_json(Path(state.artifact_dir) / "state.json", state.model_dump(mode="json"))
 
     def load(self, job_id: str) -> PipelineState:
-        return PipelineState.model_validate(read_json(self.settings.output_dir / job_id / "state.json"))
+        path = self.settings.output_dir / job_id / "state.json"
+        payload = read_json(path)
+        return PipelineState.model_validate(self._normalize_state(payload, job_id))
+
+    @staticmethod
+    def _normalize_state(payload: dict, job_id: str) -> dict:
+        """Completa gli state.json creati dalle versioni precedenti della pipeline."""
+        normalized = dict(payload)
+        normalized.setdefault("job_id", job_id)
+        normalized.setdefault("book_id", Path(normalized.get("source_name", job_id)).stem)
+        normalized.setdefault("source_path", "")
+        normalized.setdefault("source_name", normalized["book_id"])
+        normalized.setdefault("source_type", Path(normalized["source_name"]).suffix.lower())
+        normalized.setdefault("artifact_dir", str(Path("data/output") / job_id))
+        normalized.setdefault("events", [])
+        normalized.setdefault("metrics", {})
+        normalized.setdefault("source_uploaded", bool(normalized.get("source_path")))
+        status_map = {"success": "completed", "error": "failed", "stopped": "cancelled"}
+        normalized["status"] = status_map.get(normalized.get("status"), normalized.get("status", "queued"))
+        normalized.setdefault("current_stage", "queued")
+        return normalized
 
     def list_jobs(self) -> list[PipelineState]:
         jobs: list[PipelineState] = []
         for path in sorted(self.settings.output_dir.glob("*/state.json")):
-            jobs.append(PipelineState.model_validate(read_json(path)))
+            try:
+                jobs.append(PipelineState.model_validate(self._normalize_state(read_json(path), path.parent.name)))
+            except Exception:
+                LOGGER.warning("State storico non leggibile, ignorato: %s", path, exc_info=True)
         return sorted(jobs, key=lambda item: item.metrics.started_at, reverse=True)
 
 

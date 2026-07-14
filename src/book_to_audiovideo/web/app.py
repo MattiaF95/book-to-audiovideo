@@ -4,13 +4,14 @@ import tempfile
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from book_to_audiovideo.config import get_settings
 from book_to_audiovideo.models.domain import ReviewAction
 from book_to_audiovideo.pipeline.errors import PipelineError
+from book_to_audiovideo.utils.json_utils import read_json
 from book_to_audiovideo.web.dependencies import get_orchestrator
 
 
@@ -65,6 +66,24 @@ def create_app() -> FastAPI:
         except FileNotFoundError as exc:
             raise HTTPException(status_code=404, detail="Job non trovato") from exc
         return state.model_dump(mode="json")
+
+    @app.get("/api/jobs/{job_id}/stage-details/{stage}")
+    async def get_stage_details(job_id: str, stage: str) -> JSONResponse:
+        """Restituisce il JSON prodotto dallo stage, incluse pipeline storiche."""
+        orchestrator = get_orchestrator()
+        try:
+            state = orchestrator.job_store.load(job_id)
+        except FileNotFoundError as exc:
+            raise HTTPException(status_code=404, detail="Job non trovato") from exc
+        artifact_dir = settings.output_dir / job_id
+        if not artifact_dir.is_dir() or Path(stage).name != stage:
+            raise HTTPException(status_code=404, detail="Stage non trovato")
+        candidates = sorted(artifact_dir.glob(f"*_{stage}.json")) + [artifact_dir / f"{stage}.json"]
+        candidates += [artifact_dir / "manifests" / f"{stage}.json"]
+        artifact = next((path for path in candidates if path.is_file()), None)
+        if artifact is None:
+            raise HTTPException(status_code=404, detail="JSON dello stage non disponibile")
+        return JSONResponse({"stage": stage, "file_name": artifact.name, "payload": read_json(artifact)})
 
     @app.post("/api/jobs/{job_id}/review")
     async def review_job(job_id: str, action: ReviewAction = Form(...)) -> dict:

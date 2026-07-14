@@ -12,7 +12,7 @@
       <div>
         <p class="eyebrow">Pipeline locale</p>
         <h1>Book to Audiovideo Control Room</h1>
-        <p class="lead">Carica un libro, osserva ogni agent in tempo reale, approva gli stop manuali e apri il video finale appena pronto.</p>
+        <p class="lead">Una control room per seguire ogni agente, capire cosa ha prodotto e recuperare lo storico completo delle pipeline locali.</p>
         <div class="workflow-card">
           <h2>Workflow</h2>
           <div class="workflow-steps">
@@ -38,8 +38,8 @@
     <section class="grid">
       <div class="panel">
         <div class="panel-head">
-          <h2>Job</h2>
-          <span id="jobs-count">{{ jobs|length }}</span>
+          <div class="panel-title"><span class="section-kicker">Archivio locale</span><h2>Pipeline</h2></div>
+          <div class="panel-actions"><span id="jobs-count">{{ jobs|length }}</span><button id="reset-dashboard" class="icon-button" type="button" title="Reset visualizzazione">↺ Reset</button></div>
         </div>
         <div id="jobs-list" class="jobs-list">
           {% for job in jobs %}
@@ -50,8 +50,8 @@
 
       <div class="panel focus-panel">
         <div class="panel-head">
-          <h2>Stato job</h2>
-          <span id="job-status">Nessun job selezionato</span>
+          <div><span class="section-kicker">Live monitor</span><h2>Stato pipeline</h2></div>
+          <span id="job-status">Nessuna selezionata</span>
         </div>
         <div id="job-explainer" class="job-explainer empty">
           Seleziona un job per vedere fase corrente, significato dello step attivo e stato finale atteso.
@@ -65,6 +65,15 @@
       </div>
     </section>
   </main>
+
+  <div id="details-modal" class="modal" hidden>
+    <div class="modal-backdrop" data-close-details></div>
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="details-title">
+      <div class="modal-head"><div><span class="section-kicker">Output agente</span><h2 id="details-title">Dettagli</h2></div><button class="icon-button" type="button" data-close-details aria-label="Chiudi dettagli">×</button></div>
+      <p id="details-file" class="details-file"></p>
+      <pre id="details-json" class="json-viewer">Caricamento…</pre>
+    </section>
+  </div>
 
   <script src="/static/app.js"></script>
 </body>

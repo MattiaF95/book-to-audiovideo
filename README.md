@@ -139,6 +139,9 @@ La dashboard permette di:
 - avere una cronologia in locale dei test effettuati (creata in data/output/)
 - approvare o rifiutare stop manuali `needs_attention`.
 - aprire il video finale generato. 🎬
+- visualizzare una mappa compatta e leggibile della pipeline, anche per gli stage delle pipeline storiche.
+- azzerare la sola visualizzazione corrente con `Reset`, senza cancellare gli artefatti locali.
+- aprire con `Dettagli` il JSON prodotto dal singolo agente; il sistema cerca sia i file numerati sia i manifest.
 
 Avvio:
 
