@@ -244,6 +244,6 @@ Ogni job crea `data/output/<job_id>/` con:
 
 ---
 
-## ⭐ Crediti
+## ⭐ Autore
 
-Autore: **MattiaF95**
+[MattiaF95](https://github.com/MattiaF95)
